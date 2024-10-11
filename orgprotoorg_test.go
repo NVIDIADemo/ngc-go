@@ -111,8 +111,6 @@ func TestOrgProtoOrgNewWithOptionalParams(t *testing.T) {
 		SalesforceAccountIndustry: ngc.F("salesforceAccountIndustry"),
 		SendEmail:                 ngc.F(true),
 		Type:                      ngc.F(ngc.OrgProtoOrgNewParamsTypeUnknown),
-		Ncid:                      ngc.F("ncid"),
-		VisitorID:                 ngc.F("VisitorID"),
 	})
 	if err != nil {
 		var apierr *ngc.Error

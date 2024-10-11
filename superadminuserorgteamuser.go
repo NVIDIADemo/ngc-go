@@ -53,7 +53,7 @@ func (r *SuperAdminUserOrgTeamUserService) New(ctx context.Context, orgName stri
 }
 
 // Add existing User to an Team
-func (r *SuperAdminUserOrgTeamUserService) Add(ctx context.Context, orgName string, teamName string, id string, params SuperAdminUserOrgTeamUserAddParams, opts ...option.RequestOption) (res *shared.User, err error) {
+func (r *SuperAdminUserOrgTeamUserService) Add(ctx context.Context, orgName string, teamName string, id string, body SuperAdminUserOrgTeamUserAddParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
@@ -68,7 +68,7 @@ func (r *SuperAdminUserOrgTeamUserService) Add(ctx context.Context, orgName stri
 		return
 	}
 	path := fmt.Sprintf("v2/admin/org/%s/team/%s/users/%s", orgName, teamName, id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -94,8 +94,6 @@ type SuperAdminUserOrgTeamUserNewParams struct {
 	SalesforceContactJobRole param.Field[string] `json:"salesforceContactJobRole"`
 	// Metadata information about the user.
 	UserMetadata param.Field[SuperAdminUserOrgTeamUserNewParamsUserMetadata] `json:"userMetadata"`
-	Ncid         param.Field[string]                                         `cookie:"ncid"`
-	VisitorID    param.Field[string]                                         `cookie:"VisitorID"`
 }
 
 func (r SuperAdminUserOrgTeamUserNewParams) MarshalJSON() (data []byte, err error) {
@@ -137,8 +135,6 @@ func (r SuperAdminUserOrgTeamUserNewParamsUserMetadata) MarshalJSON() (data []by
 
 type SuperAdminUserOrgTeamUserAddParams struct {
 	UserRoleDefaultsToRegistryRead param.Field[string] `query:"user role, defaults to REGISTRY_READ"`
-	Ncid                           param.Field[string] `cookie:"ncid"`
-	VisitorID                      param.Field[string] `cookie:"VisitorID"`
 }
 
 // URLQuery serializes [SuperAdminUserOrgTeamUserAddParams]'s query parameters as

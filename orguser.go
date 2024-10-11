@@ -95,7 +95,7 @@ func (r *OrgUserService) Delete(ctx context.Context, orgName string, id string, 
 }
 
 // Invite if user does not exist, otherwise add role in org
-func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailOrID string, params OrgUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
+func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailOrID string, body OrgUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
@@ -106,7 +106,7 @@ func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailO
 		return
 	}
 	path := fmt.Sprintf("v3/orgs/%s/users/%s/add-role", orgName, userEmailOrID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -1096,8 +1096,6 @@ type OrgUserNewParams struct {
 	SalesforceContactJobRole param.Field[string] `json:"salesforceContactJobRole"`
 	// Metadata information about the user.
 	UserMetadata param.Field[OrgUserNewParamsUserMetadata] `json:"userMetadata"`
-	Ncid         param.Field[string]                       `cookie:"ncid"`
-	VisitorID    param.Field[string]                       `cookie:"VisitorID"`
 }
 
 func (r OrgUserNewParams) MarshalJSON() (data []byte, err error) {
@@ -1235,9 +1233,7 @@ func (r OrgUserDeleteParams) URLQuery() (v url.Values) {
 }
 
 type OrgUserAddRoleParams struct {
-	Roles     param.Field[[]string] `query:"roles,required"`
-	Ncid      param.Field[string]   `cookie:"ncid"`
-	VisitorID param.Field[string]   `cookie:"VisitorID"`
+	Roles param.Field[[]string] `query:"roles,required"`
 }
 
 // URLQuery serializes [OrgUserAddRoleParams]'s query parameters as `url.Values`.
