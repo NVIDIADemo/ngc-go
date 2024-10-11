@@ -18,7 +18,6 @@ type Client struct {
 	Options                  []option.RequestOption
 	Orgs                     *OrgService
 	Users                    *UserService
-	Organizations            *OrganizationService
 	SuperAdminUser           *SuperAdminUserService
 	SuperAdminOrg            *SuperAdminOrgService
 	SuperAdminOrgControllers *SuperAdminOrgControllerService
@@ -53,7 +52,6 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r.Orgs = NewOrgService(opts...)
 	r.Users = NewUserService(opts...)
-	r.Organizations = NewOrganizationService(opts...)
 	r.SuperAdminUser = NewSuperAdminUserService(opts...)
 	r.SuperAdminOrg = NewSuperAdminOrgService(opts...)
 	r.SuperAdminOrgControllers = NewSuperAdminOrgControllerService(opts...)
