@@ -1,0 +1,1230 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package ngc
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+
+	"github.com/NVIDIADemo/ngc-go/internal/apijson"
+	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
+	"github.com/NVIDIADemo/ngc-go/internal/pagination"
+	"github.com/NVIDIADemo/ngc-go/internal/param"
+	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
+	"github.com/NVIDIADemo/ngc-go/option"
+	"github.com/NVIDIADemo/ngc-go/shared"
+)
+
+// OrganizationTeamUserService contains methods and other services that help with
+// interacting with the ngc API.
+//
+// Note, unlike clients, this service does not read variables from the environment
+// automatically. You should not instantiate this service directly, and instead use
+// the [NewOrganizationTeamUserService] method instead.
+type OrganizationTeamUserService struct {
+	Options []option.RequestOption
+}
+
+// NewOrganizationTeamUserService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewOrganizationTeamUserService(opts ...option.RequestOption) (r *OrganizationTeamUserService) {
+	r = &OrganizationTeamUserService{}
+	r.Options = opts
+	return
+}
+
+// Creates a User and add them to a team within the org.
+func (r *OrganizationTeamUserService) New(ctx context.Context, orgName string, teamName string, params OrganizationTeamUserNewParams, opts ...option.RequestOption) (res *shared.User, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if teamName == "" {
+		err = errors.New("missing required team-name parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/org/%s/team/%s/users", orgName, teamName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// Get User details within team context
+func (r *OrganizationTeamUserService) Get(ctx context.Context, orgName string, teamName string, id string, query OrganizationTeamUserGetParams, opts ...option.RequestOption) (res *shared.User, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if teamName == "" {
+		err = errors.New("missing required team-name parameter")
+		return
+	}
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/org/%s/team/%s/users/%s", orgName, teamName, id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
+// Get list of users in team. (User Admin in team privileges required)
+func (r *OrganizationTeamUserService) List(ctx context.Context, orgName string, teamName string, query OrganizationTeamUserListParams, opts ...option.RequestOption) (res *pagination.PageNumberUsers[shared.OrganizationTeamUserListResponse], err error) {
+	var raw *http.Response
+	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if teamName == "" {
+		err = errors.New("missing required team-name parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/org/%s/team/%s/users", orgName, teamName)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get list of users in team. (User Admin in team privileges required)
+func (r *OrganizationTeamUserService) ListAutoPaging(ctx context.Context, orgName string, teamName string, query OrganizationTeamUserListParams, opts ...option.RequestOption) *pagination.PageNumberUsersAutoPager[shared.OrganizationTeamUserListResponse] {
+	return pagination.NewPageNumberUsersAutoPager(r.List(ctx, orgName, teamName, query, opts...))
+}
+
+// Removes User from team. (Org Admin or Team Admin Privileges Required).
+func (r *OrganizationTeamUserService) Delete(ctx context.Context, orgName string, teamName string, id string, opts ...option.RequestOption) (res *OrganizationTeamUserDeleteResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if teamName == "" {
+		err = errors.New("missing required team-name parameter")
+		return
+	}
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/org/%s/team/%s/users/%s", orgName, teamName, id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	return
+}
+
+// information about the user
+type OrganizationTeamUserListResponse struct {
+	// unique Id of this user.
+	ID int64 `json:"id"`
+	// unique auth client id of this user.
+	ClientID string `json:"clientId"`
+	// Created date for this user
+	CreatedDate string `json:"createdDate"`
+	// Email address of the user. This should be unique.
+	Email string `json:"email"`
+	// Last time the user logged in
+	FirstLoginDate string `json:"firstLoginDate"`
+	// Determines if the user has beta access
+	HasBetaAccess bool `json:"hasBetaAccess"`
+	// indicate if user profile has been completed.
+	HasProfile bool `json:"hasProfile"`
+	// indicates if user has accepted AI Foundry Partnerships eula
+	HasSignedAIFoundryPartnershipsEula bool `json:"hasSignedAiFoundryPartnershipsEULA"`
+	// indicates if user has accepted Base Command End User License Agreement.
+	HasSignedBaseCommandEula bool `json:"hasSignedBaseCommandEULA"`
+	// indicates if user has accepted Base Command Manager End User License Agreement.
+	HasSignedBaseCommandManagerEula bool `json:"hasSignedBaseCommandManagerEULA"`
+	// indicates if user has accepted BioNeMo End User License Agreement.
+	HasSignedBioNeMoEula bool `json:"hasSignedBioNeMoEULA"`
+	// indicates if user has accepted container publishing eula
+	HasSignedContainerPublishingEula bool `json:"hasSignedContainerPublishingEULA"`
+	// indicates if user has accepted CuOpt eula
+	HasSignedCuOptEula bool `json:"hasSignedCuOptEULA"`
+	// indicates if user has accepted Earth-2 eula
+	HasSignedEarth2Eula bool `json:"hasSignedEarth2EULA"`
+	// [Deprecated] indicates if user has accepted EGX End User License Agreement.
+	HasSignedEgxEula bool `json:"hasSignedEgxEULA"`
+	// Determines if the user has signed the NGC End User License Agreement.
+	HasSignedEula bool `json:"hasSignedEULA"`
+	// indicates if user has accepted Fleet Command End User License Agreement.
+	HasSignedFleetCommandEula bool `json:"hasSignedFleetCommandEULA"`
+	// indicates if user has accepted LLM End User License Agreement.
+	HasSignedLlmEula bool `json:"hasSignedLlmEULA"`
+	// indicates if user has accepted Fleet Command End User License Agreement.
+	HasSignedNvaieeula bool `json:"hasSignedNVAIEEULA"`
+	// Determines if the user has signed the NVIDIA End User License Agreement.
+	HasSignedNvidiaEula bool `json:"hasSignedNvidiaEULA"`
+	// indicates if user has accepted Nvidia Quantum Cloud End User License Agreement.
+	HasSignedNvqceula bool `json:"hasSignedNVQCEULA"`
+	// indicates if user has accepted Omniverse End User License Agreement.
+	HasSignedOmniverseEula bool `json:"hasSignedOmniverseEULA"`
+	// Determines if the user has signed the Privacy Policy.
+	HasSignedPrivacyPolicy bool `json:"hasSignedPrivacyPolicy"`
+	// indicates if user has consented to share their registration info with other
+	// parties
+	HasSignedThirdPartyRegistryShareEula bool `json:"hasSignedThirdPartyRegistryShareEULA"`
+	// Determines if the user has opted in email subscription.
+	HasSubscribedToEmail bool `json:"hasSubscribedToEmail"`
+	// Type of IDP, Identity Provider. Used for login.
+	IdpType OrganizationTeamUserListResponseIdpType `json:"idpType"`
+	// Determines if the user is active or not.
+	IsActive bool `json:"isActive"`
+	// Indicates if user was deleted from the system.
+	IsDeleted bool `json:"isDeleted"`
+	// Determines if the user is a SAML account or not.
+	IsSAML bool `json:"isSAML"`
+	// Title of user's job position.
+	JobPositionTitle string `json:"jobPositionTitle"`
+	// Last time the user logged in
+	LastLoginDate string `json:"lastLoginDate"`
+	// user name
+	Name string `json:"name"`
+	// List of roles that the user have
+	Roles []OrganizationTeamUserListResponseRole `json:"roles"`
+	// unique starfleet id of this user.
+	StarfleetID string `json:"starfleetId"`
+	// Storage quota for this user.
+	StorageQuota []OrganizationTeamUserListResponseStorageQuota `json:"storageQuota"`
+	// Updated date for this user
+	UpdatedDate string `json:"updatedDate"`
+	// Metadata information about the user.
+	UserMetadata OrganizationTeamUserListResponseUserMetadata `json:"userMetadata"`
+	JSON         organizationTeamUserListResponseJSON         `json:"-"`
+}
+
+// organizationTeamUserListResponseJSON contains the JSON metadata for the struct
+// [OrganizationTeamUserListResponse]
+type organizationTeamUserListResponseJSON struct {
+	ID                                   apijson.Field
+	ClientID                             apijson.Field
+	CreatedDate                          apijson.Field
+	Email                                apijson.Field
+	FirstLoginDate                       apijson.Field
+	HasBetaAccess                        apijson.Field
+	HasProfile                           apijson.Field
+	HasSignedAIFoundryPartnershipsEula   apijson.Field
+	HasSignedBaseCommandEula             apijson.Field
+	HasSignedBaseCommandManagerEula      apijson.Field
+	HasSignedBioNeMoEula                 apijson.Field
+	HasSignedContainerPublishingEula     apijson.Field
+	HasSignedCuOptEula                   apijson.Field
+	HasSignedEarth2Eula                  apijson.Field
+	HasSignedEgxEula                     apijson.Field
+	HasSignedEula                        apijson.Field
+	HasSignedFleetCommandEula            apijson.Field
+	HasSignedLlmEula                     apijson.Field
+	HasSignedNvaieeula                   apijson.Field
+	HasSignedNvidiaEula                  apijson.Field
+	HasSignedNvqceula                    apijson.Field
+	HasSignedOmniverseEula               apijson.Field
+	HasSignedPrivacyPolicy               apijson.Field
+	HasSignedThirdPartyRegistryShareEula apijson.Field
+	HasSubscribedToEmail                 apijson.Field
+	IdpType                              apijson.Field
+	IsActive                             apijson.Field
+	IsDeleted                            apijson.Field
+	IsSAML                               apijson.Field
+	JobPositionTitle                     apijson.Field
+	LastLoginDate                        apijson.Field
+	Name                                 apijson.Field
+	Roles                                apijson.Field
+	StarfleetID                          apijson.Field
+	StorageQuota                         apijson.Field
+	UpdatedDate                          apijson.Field
+	UserMetadata                         apijson.Field
+	raw                                  string
+	ExtraFields                          map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Type of IDP, Identity Provider. Used for login.
+type OrganizationTeamUserListResponseIdpType string
+
+const (
+	OrganizationTeamUserListResponseIdpTypeNvidia     OrganizationTeamUserListResponseIdpType = "NVIDIA"
+	OrganizationTeamUserListResponseIdpTypeEnterprise OrganizationTeamUserListResponseIdpType = "ENTERPRISE"
+)
+
+func (r OrganizationTeamUserListResponseIdpType) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListResponseIdpTypeNvidia, OrganizationTeamUserListResponseIdpTypeEnterprise:
+		return true
+	}
+	return false
+}
+
+// List of roles that the user have
+type OrganizationTeamUserListResponseRole struct {
+	// Information about the Organization
+	Org OrganizationTeamUserListResponseRolesOrg `json:"org"`
+	// List of org role types that the user have
+	OrgRoles []string `json:"orgRoles"`
+	// DEPRECATED - List of role types that the user have
+	RoleTypes []string `json:"roleTypes"`
+	// Information about the user who is attempting to run the job
+	TargetSystemUserIdentifier OrganizationTeamUserListResponseRolesTargetSystemUserIdentifier `json:"targetSystemUserIdentifier"`
+	// Information about the team
+	Team OrganizationTeamUserListResponseRolesTeam `json:"team"`
+	// List of team role types that the user have
+	TeamRoles []string                                 `json:"teamRoles"`
+	JSON      organizationTeamUserListResponseRoleJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRoleJSON contains the JSON metadata for the
+// struct [OrganizationTeamUserListResponseRole]
+type organizationTeamUserListResponseRoleJSON struct {
+	Org                        apijson.Field
+	OrgRoles                   apijson.Field
+	RoleTypes                  apijson.Field
+	TargetSystemUserIdentifier apijson.Field
+	Team                       apijson.Field
+	TeamRoles                  apijson.Field
+	raw                        string
+	ExtraFields                map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRole) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRoleJSON) RawJSON() string {
+	return r.raw
+}
+
+// Information about the Organization
+type OrganizationTeamUserListResponseRolesOrg struct {
+	// Unique Id of this team.
+	ID int64 `json:"id"`
+	// Org Owner Alternate Contact
+	AlternateContact OrganizationTeamUserListResponseRolesOrgAlternateContact `json:"alternateContact"`
+	// Billing account ID.
+	BillingAccountID string `json:"billingAccountId"`
+	// Identifies if the org can be reused.
+	CanAddOn bool `json:"canAddOn"`
+	// ISO country code of the organization.
+	Country string `json:"country"`
+	// Optional description of the organization.
+	Description string `json:"description"`
+	// Name of the organization that will be shown to users.
+	DisplayName string `json:"displayName"`
+	// Identity Provider ID.
+	IdpID string `json:"idpId"`
+	// Industry of the organization.
+	Industry string `json:"industry"`
+	// Infinity manager setting definition
+	InfinityManagerSettings OrganizationTeamUserListResponseRolesOrgInfinityManagerSettings `json:"infinityManagerSettings"`
+	// Dataset Service enable flag for an organization
+	IsDatasetServiceEnabled bool `json:"isDatasetServiceEnabled"`
+	// Is NVIDIA internal org or not
+	IsInternal bool `json:"isInternal"`
+	// Indicates when the org is a proto org
+	IsProto bool `json:"isProto"`
+	// Quick Start enable flag for an organization
+	IsQuickStartEnabled bool `json:"isQuickStartEnabled"`
+	// If a server side encryption is enabled for private registry (models, resources)
+	IsRegistrySseEnabled bool `json:"isRegistrySSEEnabled"`
+	// Secrets Manager Service enable flag for an organization
+	IsSecretsManagerServiceEnabled bool `json:"isSecretsManagerServiceEnabled"`
+	// Secure Credential Sharing Service enable flag for an organization
+	IsSecureCredentialSharingServiceEnabled bool `json:"isSecureCredentialSharingServiceEnabled"`
+	// If a separate influx db used for an organization in BCP for job telemetry
+	IsSeparateInfluxDBUsed bool `json:"isSeparateInfluxDbUsed"`
+	// Organization name.
+	Name string `json:"name"`
+	// NVIDIA Cloud Account Number.
+	Nan string `json:"nan"`
+	// Org owner.
+	OrgOwner OrganizationTeamUserListResponseRolesOrgOrgOwner `json:"orgOwner"`
+	// Org owners
+	OrgOwners []OrganizationTeamUserListResponseRolesOrgOrgOwner `json:"orgOwners"`
+	// Product end customer salesforce.com Id (external customer Id). pecSfdcId is for
+	// EMS (entitlement management service) to track external paid customer.
+	PecSfdcID            string                                                        `json:"pecSfdcId"`
+	ProductEnablements   []OrganizationTeamUserListResponseRolesOrgProductEnablement   `json:"productEnablements"`
+	ProductSubscriptions []OrganizationTeamUserListResponseRolesOrgProductSubscription `json:"productSubscriptions"`
+	// Repo scan setting definition
+	RepoScanSettings OrganizationTeamUserListResponseRolesOrgRepoScanSettings `json:"repoScanSettings"`
+	Type             OrganizationTeamUserListResponseRolesOrgType             `json:"type"`
+	// Users information.
+	UsersInfo OrganizationTeamUserListResponseRolesOrgUsersInfo `json:"usersInfo"`
+	JSON      organizationTeamUserListResponseRolesOrgJSON      `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgJSON contains the JSON metadata for the
+// struct [OrganizationTeamUserListResponseRolesOrg]
+type organizationTeamUserListResponseRolesOrgJSON struct {
+	ID                                      apijson.Field
+	AlternateContact                        apijson.Field
+	BillingAccountID                        apijson.Field
+	CanAddOn                                apijson.Field
+	Country                                 apijson.Field
+	Description                             apijson.Field
+	DisplayName                             apijson.Field
+	IdpID                                   apijson.Field
+	Industry                                apijson.Field
+	InfinityManagerSettings                 apijson.Field
+	IsDatasetServiceEnabled                 apijson.Field
+	IsInternal                              apijson.Field
+	IsProto                                 apijson.Field
+	IsQuickStartEnabled                     apijson.Field
+	IsRegistrySseEnabled                    apijson.Field
+	IsSecretsManagerServiceEnabled          apijson.Field
+	IsSecureCredentialSharingServiceEnabled apijson.Field
+	IsSeparateInfluxDBUsed                  apijson.Field
+	Name                                    apijson.Field
+	Nan                                     apijson.Field
+	OrgOwner                                apijson.Field
+	OrgOwners                               apijson.Field
+	PecSfdcID                               apijson.Field
+	ProductEnablements                      apijson.Field
+	ProductSubscriptions                    apijson.Field
+	RepoScanSettings                        apijson.Field
+	Type                                    apijson.Field
+	UsersInfo                               apijson.Field
+	raw                                     string
+	ExtraFields                             map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrg) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgJSON) RawJSON() string {
+	return r.raw
+}
+
+// Org Owner Alternate Contact
+type OrganizationTeamUserListResponseRolesOrgAlternateContact struct {
+	// Alternate contact's email.
+	Email string `json:"email"`
+	// Full name of the alternate contact.
+	FullName string                                                       `json:"fullName"`
+	JSON     organizationTeamUserListResponseRolesOrgAlternateContactJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgAlternateContactJSON contains the JSON
+// metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgAlternateContact]
+type organizationTeamUserListResponseRolesOrgAlternateContactJSON struct {
+	Email       apijson.Field
+	FullName    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgAlternateContact) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgAlternateContactJSON) RawJSON() string {
+	return r.raw
+}
+
+// Infinity manager setting definition
+type OrganizationTeamUserListResponseRolesOrgInfinityManagerSettings struct {
+	// Enable the infinity manager or not. Used both in org and team level object
+	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
+	// Allow override settings at team level. Only used in org level object
+	InfinityManagerEnableTeamOverride bool                                                                `json:"infinityManagerEnableTeamOverride"`
+	JSON                              organizationTeamUserListResponseRolesOrgInfinityManagerSettingsJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgInfinityManagerSettingsJSON contains the
+// JSON metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgInfinityManagerSettings]
+type organizationTeamUserListResponseRolesOrgInfinityManagerSettingsJSON struct {
+	InfinityManagerEnabled            apijson.Field
+	InfinityManagerEnableTeamOverride apijson.Field
+	raw                               string
+	ExtraFields                       map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgInfinityManagerSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
+// Org owner.
+type OrganizationTeamUserListResponseRolesOrgOrgOwner struct {
+	// Email address of the org owner.
+	Email string `json:"email,required"`
+	// Org owner name.
+	FullName string `json:"fullName,required"`
+	// Last time the org owner logged in.
+	LastLoginDate string                                               `json:"lastLoginDate"`
+	JSON          organizationTeamUserListResponseRolesOrgOrgOwnerJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgOrgOwnerJSON contains the JSON metadata
+// for the struct [OrganizationTeamUserListResponseRolesOrgOrgOwner]
+type organizationTeamUserListResponseRolesOrgOrgOwnerJSON struct {
+	Email         apijson.Field
+	FullName      apijson.Field
+	LastLoginDate apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgOrgOwner) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgOrgOwnerJSON) RawJSON() string {
+	return r.raw
+}
+
+// Product Enablement
+type OrganizationTeamUserListResponseRolesOrgProductEnablement struct {
+	// Product Name (NVAIE, BASE_COMMAND, REGISTRY, etc)
+	ProductName string `json:"productName,required"`
+	// Product Enablement Types
+	Type OrganizationTeamUserListResponseRolesOrgProductEnablementsType `json:"type,required"`
+	// Date on which the subscription expires. The subscription is invalid after this
+	// date. (yyyy-MM-dd)
+	ExpirationDate string                                                               `json:"expirationDate"`
+	PoDetails      []OrganizationTeamUserListResponseRolesOrgProductEnablementsPoDetail `json:"poDetails"`
+	JSON           organizationTeamUserListResponseRolesOrgProductEnablementJSON        `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgProductEnablementJSON contains the JSON
+// metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgProductEnablement]
+type organizationTeamUserListResponseRolesOrgProductEnablementJSON struct {
+	ProductName    apijson.Field
+	Type           apijson.Field
+	ExpirationDate apijson.Field
+	PoDetails      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgProductEnablement) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgProductEnablementJSON) RawJSON() string {
+	return r.raw
+}
+
+// Product Enablement Types
+type OrganizationTeamUserListResponseRolesOrgProductEnablementsType string
+
+const (
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminEval       OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "NGC_ADMIN_EVAL"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminNfr        OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "NGC_ADMIN_NFR"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminCommercial OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "NGC_ADMIN_COMMERCIAL"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsEval            OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "EMS_EVAL"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsNfr             OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "EMS_NFR"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsCommercial      OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "EMS_COMMERCIAL"
+	OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminDeveloper  OrganizationTeamUserListResponseRolesOrgProductEnablementsType = "NGC_ADMIN_DEVELOPER"
+)
+
+func (r OrganizationTeamUserListResponseRolesOrgProductEnablementsType) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminEval, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminNfr, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminCommercial, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsEval, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsNfr, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeEmsCommercial, OrganizationTeamUserListResponseRolesOrgProductEnablementsTypeNgcAdminDeveloper:
+		return true
+	}
+	return false
+}
+
+// Purchase Order.
+type OrganizationTeamUserListResponseRolesOrgProductEnablementsPoDetail struct {
+	// Entitlement identifier.
+	EntitlementID string `json:"entitlementId"`
+	// PAK (Product Activation Key) identifier.
+	PkID string                                                                 `json:"pkId"`
+	JSON organizationTeamUserListResponseRolesOrgProductEnablementsPoDetailJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgProductEnablementsPoDetailJSON contains
+// the JSON metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgProductEnablementsPoDetail]
+type organizationTeamUserListResponseRolesOrgProductEnablementsPoDetailJSON struct {
+	EntitlementID apijson.Field
+	PkID          apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgProductEnablementsPoDetail) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgProductEnablementsPoDetailJSON) RawJSON() string {
+	return r.raw
+}
+
+// Product Subscription
+type OrganizationTeamUserListResponseRolesOrgProductSubscription struct {
+	// Product Name (NVAIE, BASE_COMMAND, FleetCommand, REGISTRY, etc).
+	ProductName string `json:"productName,required"`
+	// Unique entitlement identifier
+	ID string `json:"id"`
+	// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
+	EmsEntitlementType OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType `json:"emsEntitlementType"`
+	// Date on which the subscription expires. The subscription is invalid after this
+	// date. (yyyy-MM-dd)
+	ExpirationDate string `json:"expirationDate"`
+	// Date on which the subscription becomes active. (yyyy-MM-dd)
+	StartDate string `json:"startDate"`
+	// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
+	// NGC_ADMIN_COMMERCIAL)
+	Type OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType `json:"type"`
+	JSON organizationTeamUserListResponseRolesOrgProductSubscriptionJSON  `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgProductSubscriptionJSON contains the
+// JSON metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgProductSubscription]
+type organizationTeamUserListResponseRolesOrgProductSubscriptionJSON struct {
+	ProductName        apijson.Field
+	ID                 apijson.Field
+	EmsEntitlementType apijson.Field
+	ExpirationDate     apijson.Field
+	StartDate          apijson.Field
+	Type               apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgProductSubscription) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgProductSubscriptionJSON) RawJSON() string {
+	return r.raw
+}
+
+// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
+type OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType string
+
+const (
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsEval       OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType = "EMS_EVAL"
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsNfr        OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType = "EMS_NFR"
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsCommerical OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType = "EMS_COMMERICAL"
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsCommercial OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType = "EMS_COMMERCIAL"
+)
+
+func (r OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementType) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsEval, OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsNfr, OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsCommerical, OrganizationTeamUserListResponseRolesOrgProductSubscriptionsEmsEntitlementTypeEmsCommercial:
+		return true
+	}
+	return false
+}
+
+// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
+// NGC_ADMIN_COMMERCIAL)
+type OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType string
+
+const (
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminEval       OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType = "NGC_ADMIN_EVAL"
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminNfr        OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType = "NGC_ADMIN_NFR"
+	OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminCommercial OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType = "NGC_ADMIN_COMMERCIAL"
+)
+
+func (r OrganizationTeamUserListResponseRolesOrgProductSubscriptionsType) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminEval, OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminNfr, OrganizationTeamUserListResponseRolesOrgProductSubscriptionsTypeNgcAdminCommercial:
+		return true
+	}
+	return false
+}
+
+// Repo scan setting definition
+type OrganizationTeamUserListResponseRolesOrgRepoScanSettings struct {
+	// Allow org admin to override the org level repo scan settings
+	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
+	// Allow repository scanning by default
+	RepoScanByDefault bool `json:"repoScanByDefault"`
+	// Enable the repository scan or not. Only used in org level object
+	RepoScanEnabled bool `json:"repoScanEnabled"`
+	// Sends notification to end user after scanning is done
+	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
+	// Allow override settings at team level. Only used in org level object
+	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
+	// Allow showing scan results to CLI or UI
+	RepoScanShowResults bool                                                         `json:"repoScanShowResults"`
+	JSON                organizationTeamUserListResponseRolesOrgRepoScanSettingsJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgRepoScanSettingsJSON contains the JSON
+// metadata for the struct
+// [OrganizationTeamUserListResponseRolesOrgRepoScanSettings]
+type organizationTeamUserListResponseRolesOrgRepoScanSettingsJSON struct {
+	RepoScanAllowOverride       apijson.Field
+	RepoScanByDefault           apijson.Field
+	RepoScanEnabled             apijson.Field
+	RepoScanEnableNotifications apijson.Field
+	RepoScanEnableTeamOverride  apijson.Field
+	RepoScanShowResults         apijson.Field
+	raw                         string
+	ExtraFields                 map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgRepoScanSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
+type OrganizationTeamUserListResponseRolesOrgType string
+
+const (
+	OrganizationTeamUserListResponseRolesOrgTypeUnknown    OrganizationTeamUserListResponseRolesOrgType = "UNKNOWN"
+	OrganizationTeamUserListResponseRolesOrgTypeCloud      OrganizationTeamUserListResponseRolesOrgType = "CLOUD"
+	OrganizationTeamUserListResponseRolesOrgTypeEnterprise OrganizationTeamUserListResponseRolesOrgType = "ENTERPRISE"
+	OrganizationTeamUserListResponseRolesOrgTypeIndividual OrganizationTeamUserListResponseRolesOrgType = "INDIVIDUAL"
+)
+
+func (r OrganizationTeamUserListResponseRolesOrgType) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListResponseRolesOrgTypeUnknown, OrganizationTeamUserListResponseRolesOrgTypeCloud, OrganizationTeamUserListResponseRolesOrgTypeEnterprise, OrganizationTeamUserListResponseRolesOrgTypeIndividual:
+		return true
+	}
+	return false
+}
+
+// Users information.
+type OrganizationTeamUserListResponseRolesOrgUsersInfo struct {
+	// Total number of users.
+	TotalUsers int64                                                 `json:"totalUsers"`
+	JSON       organizationTeamUserListResponseRolesOrgUsersInfoJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesOrgUsersInfoJSON contains the JSON metadata
+// for the struct [OrganizationTeamUserListResponseRolesOrgUsersInfo]
+type organizationTeamUserListResponseRolesOrgUsersInfoJSON struct {
+	TotalUsers  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesOrgUsersInfo) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesOrgUsersInfoJSON) RawJSON() string {
+	return r.raw
+}
+
+// Information about the user who is attempting to run the job
+type OrganizationTeamUserListResponseRolesTargetSystemUserIdentifier struct {
+	// gid of the user on this team
+	Gid int64 `json:"gid"`
+	// Org context for the job
+	OrgName string `json:"orgName"`
+	// Starfleet ID of the user creating the job.
+	StarfleetID string `json:"starfleetId"`
+	// Team context for the job
+	TeamName string `json:"teamName"`
+	// uid of the user on this team
+	Uid int64 `json:"uid"`
+	// Unique ID of the user who submitted the job
+	UserID int64                                                               `json:"userId"`
+	JSON   organizationTeamUserListResponseRolesTargetSystemUserIdentifierJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesTargetSystemUserIdentifierJSON contains the
+// JSON metadata for the struct
+// [OrganizationTeamUserListResponseRolesTargetSystemUserIdentifier]
+type organizationTeamUserListResponseRolesTargetSystemUserIdentifierJSON struct {
+	Gid         apijson.Field
+	OrgName     apijson.Field
+	StarfleetID apijson.Field
+	TeamName    apijson.Field
+	Uid         apijson.Field
+	UserID      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesTargetSystemUserIdentifier) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesTargetSystemUserIdentifierJSON) RawJSON() string {
+	return r.raw
+}
+
+// Information about the team
+type OrganizationTeamUserListResponseRolesTeam struct {
+	// unique Id of this team.
+	ID int64 `json:"id"`
+	// description of the team
+	Description string `json:"description"`
+	// Infinity manager setting definition
+	InfinityManagerSettings OrganizationTeamUserListResponseRolesTeamInfinityManagerSettings `json:"infinityManagerSettings"`
+	// indicates if the team is deleted or not
+	IsDeleted bool `json:"isDeleted"`
+	// team name
+	Name string `json:"name"`
+	// Repo scan setting definition
+	RepoScanSettings OrganizationTeamUserListResponseRolesTeamRepoScanSettings `json:"repoScanSettings"`
+	JSON             organizationTeamUserListResponseRolesTeamJSON             `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesTeamJSON contains the JSON metadata for the
+// struct [OrganizationTeamUserListResponseRolesTeam]
+type organizationTeamUserListResponseRolesTeamJSON struct {
+	ID                      apijson.Field
+	Description             apijson.Field
+	InfinityManagerSettings apijson.Field
+	IsDeleted               apijson.Field
+	Name                    apijson.Field
+	RepoScanSettings        apijson.Field
+	raw                     string
+	ExtraFields             map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesTeam) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesTeamJSON) RawJSON() string {
+	return r.raw
+}
+
+// Infinity manager setting definition
+type OrganizationTeamUserListResponseRolesTeamInfinityManagerSettings struct {
+	// Enable the infinity manager or not. Used both in org and team level object
+	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
+	// Allow override settings at team level. Only used in org level object
+	InfinityManagerEnableTeamOverride bool                                                                 `json:"infinityManagerEnableTeamOverride"`
+	JSON                              organizationTeamUserListResponseRolesTeamInfinityManagerSettingsJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesTeamInfinityManagerSettingsJSON contains
+// the JSON metadata for the struct
+// [OrganizationTeamUserListResponseRolesTeamInfinityManagerSettings]
+type organizationTeamUserListResponseRolesTeamInfinityManagerSettingsJSON struct {
+	InfinityManagerEnabled            apijson.Field
+	InfinityManagerEnableTeamOverride apijson.Field
+	raw                               string
+	ExtraFields                       map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesTeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesTeamInfinityManagerSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
+// Repo scan setting definition
+type OrganizationTeamUserListResponseRolesTeamRepoScanSettings struct {
+	// Allow org admin to override the org level repo scan settings
+	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
+	// Allow repository scanning by default
+	RepoScanByDefault bool `json:"repoScanByDefault"`
+	// Enable the repository scan or not. Only used in org level object
+	RepoScanEnabled bool `json:"repoScanEnabled"`
+	// Sends notification to end user after scanning is done
+	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
+	// Allow override settings at team level. Only used in org level object
+	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
+	// Allow showing scan results to CLI or UI
+	RepoScanShowResults bool                                                          `json:"repoScanShowResults"`
+	JSON                organizationTeamUserListResponseRolesTeamRepoScanSettingsJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseRolesTeamRepoScanSettingsJSON contains the JSON
+// metadata for the struct
+// [OrganizationTeamUserListResponseRolesTeamRepoScanSettings]
+type organizationTeamUserListResponseRolesTeamRepoScanSettingsJSON struct {
+	RepoScanAllowOverride       apijson.Field
+	RepoScanByDefault           apijson.Field
+	RepoScanEnabled             apijson.Field
+	RepoScanEnableNotifications apijson.Field
+	RepoScanEnableTeamOverride  apijson.Field
+	RepoScanShowResults         apijson.Field
+	raw                         string
+	ExtraFields                 map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseRolesTeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseRolesTeamRepoScanSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
+// represents user storage quota for a given ace and available unused storage
+type OrganizationTeamUserListResponseStorageQuota struct {
+	// id of the ace
+	AceID int64 `json:"aceId"`
+	// name of the ace
+	AceName string `json:"aceName"`
+	// Available space in bytes
+	Available int64 `json:"available"`
+	// Number of datasets that are a part of user's used storage
+	DatasetCount int64 `json:"datasetCount"`
+	// Space used by datasets in bytes
+	DatasetsUsage int64 `json:"datasetsUsage"`
+	// The org name that this user quota tied to. This is needed for analytics
+	OrgName string `json:"orgName"`
+	// Assigned quota in bytes
+	Quota int64 `json:"quota"`
+	// Number of resultsets that are a part of user's used storage
+	ResultsetCount int64 `json:"resultsetCount"`
+	// Space used by resultsets in bytes
+	ResultsetsUsage int64 `json:"resultsetsUsage"`
+	// Description of this storage cluster
+	StorageClusterDescription string `json:"storageClusterDescription"`
+	// Name of storage cluster
+	StorageClusterName string `json:"storageClusterName"`
+	// Identifier to this storage cluster
+	StorageClusterUuid string `json:"storageClusterUuid"`
+	// Number of workspaces that are a part of user's used storage
+	WorkspacesCount int64 `json:"workspacesCount"`
+	// Space used by workspaces in bytes
+	WorkspacesUsage int64                                            `json:"workspacesUsage"`
+	JSON            organizationTeamUserListResponseStorageQuotaJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseStorageQuotaJSON contains the JSON metadata for
+// the struct [OrganizationTeamUserListResponseStorageQuota]
+type organizationTeamUserListResponseStorageQuotaJSON struct {
+	AceID                     apijson.Field
+	AceName                   apijson.Field
+	Available                 apijson.Field
+	DatasetCount              apijson.Field
+	DatasetsUsage             apijson.Field
+	OrgName                   apijson.Field
+	Quota                     apijson.Field
+	ResultsetCount            apijson.Field
+	ResultsetsUsage           apijson.Field
+	StorageClusterDescription apijson.Field
+	StorageClusterName        apijson.Field
+	StorageClusterUuid        apijson.Field
+	WorkspacesCount           apijson.Field
+	WorkspacesUsage           apijson.Field
+	raw                       string
+	ExtraFields               map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseStorageQuota) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseStorageQuotaJSON) RawJSON() string {
+	return r.raw
+}
+
+// Metadata information about the user.
+type OrganizationTeamUserListResponseUserMetadata struct {
+	// Name of the company
+	Company string `json:"company"`
+	// Company URL
+	CompanyURL string `json:"companyUrl"`
+	// Country of the user
+	Country string `json:"country"`
+	// User's first name
+	FirstName string `json:"firstName"`
+	// Industry segment
+	Industry string `json:"industry"`
+	// List of development areas that user has interest
+	Interest []string `json:"interest"`
+	// User's last name
+	LastName string `json:"lastName"`
+	// Role of the user in the company
+	Role string                                           `json:"role"`
+	JSON organizationTeamUserListResponseUserMetadataJSON `json:"-"`
+}
+
+// organizationTeamUserListResponseUserMetadataJSON contains the JSON metadata for
+// the struct [OrganizationTeamUserListResponseUserMetadata]
+type organizationTeamUserListResponseUserMetadataJSON struct {
+	Company     apijson.Field
+	CompanyURL  apijson.Field
+	Country     apijson.Field
+	FirstName   apijson.Field
+	Industry    apijson.Field
+	Interest    apijson.Field
+	LastName    apijson.Field
+	Role        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserListResponseUserMetadata) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserListResponseUserMetadataJSON) RawJSON() string {
+	return r.raw
+}
+
+type OrganizationTeamUserDeleteResponse struct {
+	RequestStatus OrganizationTeamUserDeleteResponseRequestStatus `json:"requestStatus"`
+	JSON          organizationTeamUserDeleteResponseJSON          `json:"-"`
+}
+
+// organizationTeamUserDeleteResponseJSON contains the JSON metadata for the struct
+// [OrganizationTeamUserDeleteResponse]
+type organizationTeamUserDeleteResponseJSON struct {
+	RequestStatus apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserDeleteResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserDeleteResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type OrganizationTeamUserDeleteResponseRequestStatus struct {
+	RequestID string `json:"requestId"`
+	ServerID  string `json:"serverId"`
+	// Describes response status reported by the server.
+	StatusCode        OrganizationTeamUserDeleteResponseRequestStatusStatusCode `json:"statusCode"`
+	StatusDescription string                                                    `json:"statusDescription"`
+	JSON              organizationTeamUserDeleteResponseRequestStatusJSON       `json:"-"`
+}
+
+// organizationTeamUserDeleteResponseRequestStatusJSON contains the JSON metadata
+// for the struct [OrganizationTeamUserDeleteResponseRequestStatus]
+type organizationTeamUserDeleteResponseRequestStatusJSON struct {
+	RequestID         apijson.Field
+	ServerID          apijson.Field
+	StatusCode        apijson.Field
+	StatusDescription apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *OrganizationTeamUserDeleteResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationTeamUserDeleteResponseRequestStatusJSON) RawJSON() string {
+	return r.raw
+}
+
+// Describes response status reported by the server.
+type OrganizationTeamUserDeleteResponseRequestStatusStatusCode string
+
+const (
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnknown                    OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "UNKNOWN"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeSuccess                    OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "SUCCESS"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnauthorized               OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "UNAUTHORIZED"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodePaymentRequired            OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeForbidden                  OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "FORBIDDEN"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeTimeout                    OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "TIMEOUT"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeExists                     OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "EXISTS"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeNotFound                   OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "NOT_FOUND"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInternalError              OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "INTERNAL_ERROR"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequest             OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "INVALID_REQUEST"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequestVersion      OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequestData         OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeMethodNotAllowed           OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeConflict                   OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "CONFLICT"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnprocessableEntity        OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeTooManyRequests            OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInsufficientStorage        OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeServiceUnavailable         OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodePayloadTooLarge            OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeNotAcceptable              OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnavailableForLegalReasons OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
+	OrganizationTeamUserDeleteResponseRequestStatusStatusCodeBadGateway                 OrganizationTeamUserDeleteResponseRequestStatusStatusCode = "BAD_GATEWAY"
+)
+
+func (r OrganizationTeamUserDeleteResponseRequestStatusStatusCode) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnknown, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeSuccess, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnauthorized, OrganizationTeamUserDeleteResponseRequestStatusStatusCodePaymentRequired, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeForbidden, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeTimeout, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeExists, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeNotFound, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInternalError, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequest, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequestVersion, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInvalidRequestData, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeMethodNotAllowed, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeConflict, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnprocessableEntity, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeTooManyRequests, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeInsufficientStorage, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeServiceUnavailable, OrganizationTeamUserDeleteResponseRequestStatusStatusCodePayloadTooLarge, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeNotAcceptable, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeUnavailableForLegalReasons, OrganizationTeamUserDeleteResponseRequestStatusStatusCodeBadGateway:
+		return true
+	}
+	return false
+}
+
+type OrganizationTeamUserNewParams struct {
+	// Email address of the user. This should be unique.
+	Email param.Field[string] `json:"email,required"`
+	// If the IDP ID is provided then it is used instead of the one configured for the
+	// organization
+	IdpID     param.Field[string] `query:"idp-id"`
+	SendEmail param.Field[bool]   `query:"send-email"`
+	// indicates if user has opt in to nvidia emails
+	EmailOptIn param.Field[bool] `json:"emailOptIn"`
+	// indicates if user has accepted EULA
+	EulaAccepted param.Field[bool] `json:"eulaAccepted"`
+	// user name
+	Name param.Field[string] `json:"name"`
+	// DEPRECATED - use roleTypes which allows multiple roles
+	RoleType param.Field[string] `json:"roleType"`
+	// feature roles to give to the user
+	RoleTypes param.Field[[]string] `json:"roleTypes"`
+	// user job role
+	SalesforceContactJobRole param.Field[string] `json:"salesforceContactJobRole"`
+	// Metadata information about the user.
+	UserMetadata param.Field[OrganizationTeamUserNewParamsUserMetadata] `json:"userMetadata"`
+	Ncid         param.Field[string]                                    `cookie:"ncid"`
+	VisitorID    param.Field[string]                                    `cookie:"VisitorID"`
+}
+
+func (r OrganizationTeamUserNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [OrganizationTeamUserNewParams]'s query parameters as
+// `url.Values`.
+func (r OrganizationTeamUserNewParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Metadata information about the user.
+type OrganizationTeamUserNewParamsUserMetadata struct {
+	// Name of the company
+	Company param.Field[string] `json:"company"`
+	// Company URL
+	CompanyURL param.Field[string] `json:"companyUrl"`
+	// Country of the user
+	Country param.Field[string] `json:"country"`
+	// User's first name
+	FirstName param.Field[string] `json:"firstName"`
+	// Industry segment
+	Industry param.Field[string] `json:"industry"`
+	// List of development areas that user has interest
+	Interest param.Field[[]string] `json:"interest"`
+	// User's last name
+	LastName param.Field[string] `json:"lastName"`
+	// Role of the user in the company
+	Role param.Field[string] `json:"role"`
+}
+
+func (r OrganizationTeamUserNewParamsUserMetadata) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type OrganizationTeamUserGetParams struct {
+	// If the IDP ID is provided then it is used instead of the one configured for the
+	// organization. If no IDP is configured for the organization, then IDP is guessed
+	// based on the email domain
+	IdpID param.Field[string] `query:"idp-id"`
+}
+
+// URLQuery serializes [OrganizationTeamUserGetParams]'s query parameters as
+// `url.Values`.
+func (r OrganizationTeamUserGetParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type OrganizationTeamUserListParams struct {
+	// The page number of result
+	PageNumber param.Field[int64] `query:"page-number"`
+	// The page size of result
+	PageSize param.Field[int64] `query:"page-size"`
+	// User Search Parameters. Only 'filters' and 'orderBy' for 'name' and 'email' are
+	// implemented
+	Q param.Field[OrganizationTeamUserListParamsQ] `query:"q"`
+}
+
+// URLQuery serializes [OrganizationTeamUserListParams]'s query parameters as
+// `url.Values`.
+func (r OrganizationTeamUserListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// User Search Parameters. Only 'filters' and 'orderBy' for 'name' and 'email' are
+// implemented
+type OrganizationTeamUserListParamsQ struct {
+	Fields      param.Field[[]string]                                 `query:"fields"`
+	Filters     param.Field[[]OrganizationTeamUserListParamsQFilter]  `query:"filters"`
+	GroupBy     param.Field[string]                                   `query:"groupBy"`
+	OrderBy     param.Field[[]OrganizationTeamUserListParamsQOrderBy] `query:"orderBy"`
+	Page        param.Field[int64]                                    `query:"page"`
+	PageSize    param.Field[int64]                                    `query:"pageSize"`
+	Query       param.Field[string]                                   `query:"query"`
+	QueryFields param.Field[[]string]                                 `query:"queryFields"`
+	ScoredSize  param.Field[int64]                                    `query:"scoredSize"`
+}
+
+// URLQuery serializes [OrganizationTeamUserListParamsQ]'s query parameters as
+// `url.Values`.
+func (r OrganizationTeamUserListParamsQ) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type OrganizationTeamUserListParamsQFilter struct {
+	Field param.Field[string] `query:"field"`
+	Value param.Field[string] `query:"value"`
+}
+
+// URLQuery serializes [OrganizationTeamUserListParamsQFilter]'s query parameters
+// as `url.Values`.
+func (r OrganizationTeamUserListParamsQFilter) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type OrganizationTeamUserListParamsQOrderBy struct {
+	Field param.Field[string]                                      `query:"field"`
+	Value param.Field[OrganizationTeamUserListParamsQOrderByValue] `query:"value"`
+}
+
+// URLQuery serializes [OrganizationTeamUserListParamsQOrderBy]'s query parameters
+// as `url.Values`.
+func (r OrganizationTeamUserListParamsQOrderBy) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type OrganizationTeamUserListParamsQOrderByValue string
+
+const (
+	OrganizationTeamUserListParamsQOrderByValueAsc  OrganizationTeamUserListParamsQOrderByValue = "ASC"
+	OrganizationTeamUserListParamsQOrderByValueDesc OrganizationTeamUserListParamsQOrderByValue = "DESC"
+)
+
+func (r OrganizationTeamUserListParamsQOrderByValue) IsKnown() bool {
+	switch r {
+	case OrganizationTeamUserListParamsQOrderByValueAsc, OrganizationTeamUserListParamsQOrderByValueDesc:
+		return true
+	}
+	return false
+}
