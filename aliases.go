@@ -216,6 +216,21 @@ const MeteringResultListRequestStatusStatusCodeUnavailableForLegalReasons = shar
 // This is an alias to an internal value.
 const MeteringResultListRequestStatusStatusCodeBadGateway = shared.MeteringResultListRequestStatusStatusCodeBadGateway
 
+// Information about the team
+//
+// This is an alias to an internal type.
+type Team = shared.Team
+
+// Infinity manager setting definition
+//
+// This is an alias to an internal type.
+type TeamInfinityManagerSettings = shared.TeamInfinityManagerSettings
+
+// Repo scan setting definition
+//
+// This is an alias to an internal type.
+type TeamRepoScanSettings = shared.TeamRepoScanSettings
+
 // listing of all teams
 //
 // This is an alias to an internal type.
@@ -299,21 +314,6 @@ const TeamListRequestStatusStatusCodeUnavailableForLegalReasons = shared.TeamLis
 
 // This is an alias to an internal value.
 const TeamListRequestStatusStatusCodeBadGateway = shared.TeamListRequestStatusStatusCodeBadGateway
-
-// Information about the team
-//
-// This is an alias to an internal type.
-type TeamListTeam = shared.TeamListTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type TeamListTeamsInfinityManagerSettings = shared.TeamListTeamsInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type TeamListTeamsRepoScanSettings = shared.TeamListTeamsRepoScanSettings
 
 // about one user
 //
@@ -558,21 +558,6 @@ type UserUserRolesOrgUsersInfo = shared.UserUserRolesOrgUsersInfo
 // This is an alias to an internal type.
 type UserUserRolesTargetSystemUserIdentifier = shared.UserUserRolesTargetSystemUserIdentifier
 
-// Information about the team
-//
-// This is an alias to an internal type.
-type UserUserRolesTeam = shared.UserUserRolesTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type UserUserRolesTeamInfinityManagerSettings = shared.UserUserRolesTeamInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type UserUserRolesTeamRepoScanSettings = shared.UserUserRolesTeamRepoScanSettings
-
 // represents user storage quota for a given ace and available unused storage
 //
 // This is an alias to an internal type.
@@ -810,21 +795,6 @@ type UserListUsersRolesOrgUsersInfo = shared.UserListUsersRolesOrgUsersInfo
 //
 // This is an alias to an internal type.
 type UserListUsersRolesTargetSystemUserIdentifier = shared.UserListUsersRolesTargetSystemUserIdentifier
-
-// Information about the team
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeam = shared.UserListUsersRolesTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeamInfinityManagerSettings = shared.UserListUsersRolesTeamInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeamRepoScanSettings = shared.UserListUsersRolesTeamRepoScanSettings
 
 // represents user storage quota for a given ace and available unused storage
 //

@@ -17,13 +17,10 @@ import (
 type Client struct {
 	Options          []option.RequestOption
 	Orgs             *OrgService
-	Users            *UserService
+	Me               *MeService
 	Admin            *AdminService
 	UsersManagement  *UsersManagementService
 	Services         *ServiceService
-	V3OrgsUsers      *V3OrgsUserService
-	V3OrgsTeamsUsers *V3OrgsTeamsUserService
-	V3Orgs           *V3OrgService
 	Roles            *RoleService
 	PublicKeys       *PublicKeyService
 	Health           *HealthService
@@ -44,13 +41,10 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r = &Client{Options: opts}
 
 	r.Orgs = NewOrgService(opts...)
-	r.Users = NewUserService(opts...)
+	r.Me = NewMeService(opts...)
 	r.Admin = NewAdminService(opts...)
 	r.UsersManagement = NewUsersManagementService(opts...)
 	r.Services = NewServiceService(opts...)
-	r.V3OrgsUsers = NewV3OrgsUserService(opts...)
-	r.V3OrgsTeamsUsers = NewV3OrgsTeamsUserService(opts...)
-	r.V3Orgs = NewV3OrgService(opts...)
 	r.Roles = NewRoleService(opts...)
 	r.PublicKeys = NewPublicKeyService(opts...)
 	r.Health = NewHealthService(opts...)

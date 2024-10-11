@@ -48,6 +48,22 @@ func (r *AdminOrgUserService) New(ctx context.Context, orgName string, params Ad
 	return
 }
 
+// Get info and role/invitation in an org by email or id
+func (r *AdminOrgUserService) Get(ctx context.Context, orgName string, userEmailOrID string, opts ...option.RequestOption) (res *shared.User, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if userEmailOrID == "" {
+		err = errors.New("missing required user-email-or-id parameter")
+		return
+	}
+	path := fmt.Sprintf("v3/orgs/%s/users/%s", orgName, userEmailOrID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
 // Add existing User to an Org
 func (r *AdminOrgUserService) Add(ctx context.Context, orgName string, id string, body AdminOrgUserAddParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)

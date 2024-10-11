@@ -2,6 +2,7 @@
 
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#Health">Health</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#MeteringResultList">MeteringResultList</a>
+- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#Team">Team</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#TeamList">TeamList</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#UserList">UserList</a>
@@ -45,13 +46,9 @@ Methods:
 
 ## Teams
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamListResponse">OrgTeamListResponse</a>
-
 Methods:
 
-- <code title="get /v2/org/{org-name}/teams">client.Orgs.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamListParams">OrgTeamListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberTeams">PageNumberTeams</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#OrgTeamListResponse">OrgTeamListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/org/{org-name}/teams">client.Orgs.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamListParams">OrgTeamListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberTeams">PageNumberTeams</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#Team">Team</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Users
 
@@ -121,11 +118,9 @@ Methods:
 
 - <code title="get /v2/org/{org-name}/auditLogs/{log-id}">client.Orgs.AuditLogs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgAuditLogService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, logID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AuditLogsPresignedURL">AuditLogsPresignedURL</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Users
+# Me
 
-## V2
-
-### APIKey
+## APIKey
 
 Response Types:
 
@@ -133,7 +128,7 @@ Response Types:
 
 Methods:
 
-- <code title="post /v2/users/me/api-key">client.Users.V2.APIKey.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UserV2APIKeyService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UserKeyResponse">UserKeyResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /v2/users/me/api-key">client.Me.APIKey.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#MeAPIKeyService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UserKeyResponse">UserKeyResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Admin
 
@@ -148,6 +143,7 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOrgOwnerBackfillResponse">AdminOrgOrgOwnerBackfillResponse</a>
+- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateResponse">AdminOrgValidateResponse</a>
 
 Methods:
 
@@ -157,6 +153,7 @@ Methods:
 - <code title="post /v2/admin/backfill-orgs-to-kratos">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.BackfillOrgsToKratos">BackfillOrgsToKratos</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v2/admin/org/{org-name}/enablement">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.Enable">Enable</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgEnableParams">AdminOrgEnableParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v2/admin/org/{org-name}/org-owner-backfill">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.OrgOwnerBackfill">OrgOwnerBackfill</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOrgOwnerBackfillResponse">AdminOrgOrgOwnerBackfillResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v3/orgs/proto-org/validate">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateParams">AdminOrgValidateParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateResponse">AdminOrgValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Users
 
@@ -167,6 +164,7 @@ Response Types:
 Methods:
 
 - <code title="post /v2/admin/org/{org-name}/users">client.Admin.Orgs.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserNewParams">AdminOrgUserNewParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v3/orgs/{org-name}/users/{user-email-or-id}">client.Admin.Orgs.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, userEmailOrID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v2/admin/org/{org-name}/users/{id}">client.Admin.Orgs.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserService.Add">Add</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserAddParams">AdminOrgUserAddParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /v2/admin/org/{org-name}/users/{id}/add-role">client.Admin.Orgs.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserService.AddRole">AddRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserAddRoleParams">AdminOrgUserAddRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v2/admin/org/{org-name}/entitlements">client.Admin.Orgs.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserService.GetEntitlements">GetEntitlements</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUserGetEntitlementsParams">AdminOrgUserGetEntitlementsParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
@@ -183,6 +181,7 @@ Methods:
 - <code title="patch /v2/admin/org/{org-name}/teams/{team-name}">client.Admin.Orgs.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserUpdateParams">AdminOrgTeamUserUpdateParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v2/admin/org/{org-name}/team/{team-name}/users/{id}">client.Admin.Orgs.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserService.Add">Add</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserAddParams">AdminOrgTeamUserAddParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /v2/admin/org/{org-name}/team/{team-name}/users/{id}/add-role">client.Admin.Orgs.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserService.AddRole">AddRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserAddRoleParams">AdminOrgTeamUserAddRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v3/orgs/{org-name}/teams/{team-name}/users/{user-email-or-id}">client.Admin.Orgs.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamUserService.GetUser">GetUser</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, userEmailOrID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Users
 
@@ -213,28 +212,6 @@ Response Types:
 Methods:
 
 - <code title="get /version">client.Services.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#ServiceService.Version">Version</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#ServiceVersionParams">ServiceVersionParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#ServiceVersionResponse">ServiceVersionResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# V3OrgsUsers
-
-Methods:
-
-- <code title="get /v3/orgs/{org-name}/users/{user-email-or-id}">client.V3OrgsUsers.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#V3OrgsUserService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, userEmailOrID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# V3OrgsTeamsUsers
-
-Methods:
-
-- <code title="get /v3/orgs/{org-name}/teams/{team-name}/users/{user-email-or-id}">client.V3OrgsTeamsUsers.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#V3OrgsTeamsUserService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, userEmailOrID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# V3Orgs
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgInvitation">OrgInvitation</a>
-
-Methods:
-
-- <code title="get /v3/orgs/proto-org/validate">client.V3Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#V3OrgService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#V3OrgValidateParams">V3OrgValidateParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgInvitation">OrgInvitation</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Roles
 

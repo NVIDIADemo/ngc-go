@@ -7,8 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
+	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
@@ -106,6 +108,14 @@ func (r *AdminOrgService) OrgOwnerBackfill(ctx context.Context, orgName string, 
 	return
 }
 
+// Validate org creation from proto org
+func (r *AdminOrgService) Validate(ctx context.Context, query AdminOrgValidateParams, opts ...option.RequestOption) (res *AdminOrgValidateResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "v3/orgs/proto-org/validate"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
 type AdminOrgOrgOwnerBackfillResponse struct {
 	RequestStatus AdminOrgOrgOwnerBackfillResponseRequestStatus `json:"requestStatus"`
 	JSON          adminOrgOrgOwnerBackfillResponseJSON          `json:"-"`
@@ -186,6 +196,121 @@ const (
 func (r AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode) IsKnown() bool {
 	switch r {
 	case AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnknown, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeSuccess, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnauthorized, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePaymentRequired, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeForbidden, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTimeout, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeExists, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotFound, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInternalError, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequest, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestVersion, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestData, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeMethodNotAllowed, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeConflict, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnprocessableEntity, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTooManyRequests, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInsufficientStorage, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeServiceUnavailable, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePayloadTooLarge, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotAcceptable, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeBadGateway:
+		return true
+	}
+	return false
+}
+
+// Invitation Validation Response.
+type AdminOrgValidateResponse struct {
+	// Org invitation to NGC
+	OrgInvitation AdminOrgValidateResponseOrgInvitation `json:"orgInvitation"`
+	RequestStatus AdminOrgValidateResponseRequestStatus `json:"requestStatus"`
+	JSON          adminOrgValidateResponseJSON          `json:"-"`
+}
+
+// adminOrgValidateResponseJSON contains the JSON metadata for the struct
+// [AdminOrgValidateResponse]
+type adminOrgValidateResponseJSON struct {
+	OrgInvitation apijson.Field
+	RequestStatus apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *AdminOrgValidateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r adminOrgValidateResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Org invitation to NGC
+type AdminOrgValidateResponseOrgInvitation struct {
+	// Email address of the user.
+	Email string `json:"email"`
+	// Proto Org identifier.
+	ProtoOrgID string                                    `json:"protoOrgId"`
+	JSON       adminOrgValidateResponseOrgInvitationJSON `json:"-"`
+}
+
+// adminOrgValidateResponseOrgInvitationJSON contains the JSON metadata for the
+// struct [AdminOrgValidateResponseOrgInvitation]
+type adminOrgValidateResponseOrgInvitationJSON struct {
+	Email       apijson.Field
+	ProtoOrgID  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AdminOrgValidateResponseOrgInvitation) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r adminOrgValidateResponseOrgInvitationJSON) RawJSON() string {
+	return r.raw
+}
+
+type AdminOrgValidateResponseRequestStatus struct {
+	RequestID string `json:"requestId"`
+	ServerID  string `json:"serverId"`
+	// Describes response status reported by the server.
+	StatusCode        AdminOrgValidateResponseRequestStatusStatusCode `json:"statusCode"`
+	StatusDescription string                                          `json:"statusDescription"`
+	JSON              adminOrgValidateResponseRequestStatusJSON       `json:"-"`
+}
+
+// adminOrgValidateResponseRequestStatusJSON contains the JSON metadata for the
+// struct [AdminOrgValidateResponseRequestStatus]
+type adminOrgValidateResponseRequestStatusJSON struct {
+	RequestID         apijson.Field
+	ServerID          apijson.Field
+	StatusCode        apijson.Field
+	StatusDescription apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AdminOrgValidateResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r adminOrgValidateResponseRequestStatusJSON) RawJSON() string {
+	return r.raw
+}
+
+// Describes response status reported by the server.
+type AdminOrgValidateResponseRequestStatusStatusCode string
+
+const (
+	AdminOrgValidateResponseRequestStatusStatusCodeUnknown                    AdminOrgValidateResponseRequestStatusStatusCode = "UNKNOWN"
+	AdminOrgValidateResponseRequestStatusStatusCodeSuccess                    AdminOrgValidateResponseRequestStatusStatusCode = "SUCCESS"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnauthorized               AdminOrgValidateResponseRequestStatusStatusCode = "UNAUTHORIZED"
+	AdminOrgValidateResponseRequestStatusStatusCodePaymentRequired            AdminOrgValidateResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
+	AdminOrgValidateResponseRequestStatusStatusCodeForbidden                  AdminOrgValidateResponseRequestStatusStatusCode = "FORBIDDEN"
+	AdminOrgValidateResponseRequestStatusStatusCodeTimeout                    AdminOrgValidateResponseRequestStatusStatusCode = "TIMEOUT"
+	AdminOrgValidateResponseRequestStatusStatusCodeExists                     AdminOrgValidateResponseRequestStatusStatusCode = "EXISTS"
+	AdminOrgValidateResponseRequestStatusStatusCodeNotFound                   AdminOrgValidateResponseRequestStatusStatusCode = "NOT_FOUND"
+	AdminOrgValidateResponseRequestStatusStatusCodeInternalError              AdminOrgValidateResponseRequestStatusStatusCode = "INTERNAL_ERROR"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequest             AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestVersion      AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestData         AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
+	AdminOrgValidateResponseRequestStatusStatusCodeMethodNotAllowed           AdminOrgValidateResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
+	AdminOrgValidateResponseRequestStatusStatusCodeConflict                   AdminOrgValidateResponseRequestStatusStatusCode = "CONFLICT"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnprocessableEntity        AdminOrgValidateResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
+	AdminOrgValidateResponseRequestStatusStatusCodeTooManyRequests            AdminOrgValidateResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
+	AdminOrgValidateResponseRequestStatusStatusCodeInsufficientStorage        AdminOrgValidateResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
+	AdminOrgValidateResponseRequestStatusStatusCodeServiceUnavailable         AdminOrgValidateResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
+	AdminOrgValidateResponseRequestStatusStatusCodePayloadTooLarge            AdminOrgValidateResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
+	AdminOrgValidateResponseRequestStatusStatusCodeNotAcceptable              AdminOrgValidateResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnavailableForLegalReasons AdminOrgValidateResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
+	AdminOrgValidateResponseRequestStatusStatusCodeBadGateway                 AdminOrgValidateResponseRequestStatusStatusCode = "BAD_GATEWAY"
+)
+
+func (r AdminOrgValidateResponseRequestStatusStatusCode) IsKnown() bool {
+	switch r {
+	case AdminOrgValidateResponseRequestStatusStatusCodeUnknown, AdminOrgValidateResponseRequestStatusStatusCodeSuccess, AdminOrgValidateResponseRequestStatusStatusCodeUnauthorized, AdminOrgValidateResponseRequestStatusStatusCodePaymentRequired, AdminOrgValidateResponseRequestStatusStatusCodeForbidden, AdminOrgValidateResponseRequestStatusStatusCodeTimeout, AdminOrgValidateResponseRequestStatusStatusCodeExists, AdminOrgValidateResponseRequestStatusStatusCodeNotFound, AdminOrgValidateResponseRequestStatusStatusCodeInternalError, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequest, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestVersion, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestData, AdminOrgValidateResponseRequestStatusStatusCodeMethodNotAllowed, AdminOrgValidateResponseRequestStatusStatusCodeConflict, AdminOrgValidateResponseRequestStatusStatusCodeUnprocessableEntity, AdminOrgValidateResponseRequestStatusStatusCodeTooManyRequests, AdminOrgValidateResponseRequestStatusStatusCodeInsufficientStorage, AdminOrgValidateResponseRequestStatusStatusCodeServiceUnavailable, AdminOrgValidateResponseRequestStatusStatusCodePayloadTooLarge, AdminOrgValidateResponseRequestStatusStatusCodeNotAcceptable, AdminOrgValidateResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminOrgValidateResponseRequestStatusStatusCodeBadGateway:
 		return true
 	}
 	return false
@@ -651,4 +776,17 @@ type AdminOrgEnableParamsProductEnablementPoDetail struct {
 
 func (r AdminOrgEnableParamsProductEnablementPoDetail) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type AdminOrgValidateParams struct {
+	// JWT that contains org owner email and proto org identifier
+	InvitationToken param.Field[string] `query:"invitation_token,required"`
+}
+
+// URLQuery serializes [AdminOrgValidateParams]'s query parameters as `url.Values`.
+func (r AdminOrgValidateParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

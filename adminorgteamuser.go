@@ -126,6 +126,26 @@ func (r *AdminOrgTeamUserService) AddRole(ctx context.Context, orgName string, t
 	return
 }
 
+// Get info and role/invitation in a team by email or id
+func (r *AdminOrgTeamUserService) GetUser(ctx context.Context, orgName string, teamName string, userEmailOrID string, opts ...option.RequestOption) (res *shared.User, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	if teamName == "" {
+		err = errors.New("missing required team-name parameter")
+		return
+	}
+	if userEmailOrID == "" {
+		err = errors.New("missing required user-email-or-id parameter")
+		return
+	}
+	path := fmt.Sprintf("v3/orgs/%s/teams/%s/users/%s", orgName, teamName, userEmailOrID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
 type AdminOrgTeamUserNewParams struct {
 	// Email address of the user. This should be unique.
 	Email param.Field[string] `json:"email,required"`
