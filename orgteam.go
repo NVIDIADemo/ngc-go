@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/NVIDIADemo/ngc-go/internal/apijson"
 	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
 	"github.com/NVIDIADemo/ngc-go/internal/pagination"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
@@ -44,7 +43,7 @@ func NewOrgTeamService(opts ...option.RequestOption) (r *OrgTeamService) {
 }
 
 // List all Teams
-func (r *OrgTeamService) List(ctx context.Context, orgName string, query OrgTeamListParams, opts ...option.RequestOption) (res *pagination.PageNumberTeams[shared.OrgTeamListResponse], err error) {
+func (r *OrgTeamService) List(ctx context.Context, orgName string, query OrgTeamListParams, opts ...option.RequestOption) (res *pagination.PageNumberTeams[shared.Team], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -66,110 +65,8 @@ func (r *OrgTeamService) List(ctx context.Context, orgName string, query OrgTeam
 }
 
 // List all Teams
-func (r *OrgTeamService) ListAutoPaging(ctx context.Context, orgName string, query OrgTeamListParams, opts ...option.RequestOption) *pagination.PageNumberTeamsAutoPager[shared.OrgTeamListResponse] {
+func (r *OrgTeamService) ListAutoPaging(ctx context.Context, orgName string, query OrgTeamListParams, opts ...option.RequestOption) *pagination.PageNumberTeamsAutoPager[shared.Team] {
 	return pagination.NewPageNumberTeamsAutoPager(r.List(ctx, orgName, query, opts...))
-}
-
-// Information about the team
-type OrgTeamListResponse struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings OrgTeamListResponseInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings OrgTeamListResponseRepoScanSettings `json:"repoScanSettings"`
-	JSON             orgTeamListResponseJSON             `json:"-"`
-}
-
-// orgTeamListResponseJSON contains the JSON metadata for the struct
-// [OrgTeamListResponse]
-type orgTeamListResponseJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *OrgTeamListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgTeamListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type OrgTeamListResponseInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                           `json:"infinityManagerEnableTeamOverride"`
-	JSON                              orgTeamListResponseInfinityManagerSettingsJSON `json:"-"`
-}
-
-// orgTeamListResponseInfinityManagerSettingsJSON contains the JSON metadata for
-// the struct [OrgTeamListResponseInfinityManagerSettings]
-type orgTeamListResponseInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *OrgTeamListResponseInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgTeamListResponseInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type OrgTeamListResponseRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                    `json:"repoScanShowResults"`
-	JSON                orgTeamListResponseRepoScanSettingsJSON `json:"-"`
-}
-
-// orgTeamListResponseRepoScanSettingsJSON contains the JSON metadata for the
-// struct [OrgTeamListResponseRepoScanSettings]
-type orgTeamListResponseRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *OrgTeamListResponseRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgTeamListResponseRepoScanSettingsJSON) RawJSON() string {
-	return r.raw
 }
 
 type OrgTeamListParams struct {
