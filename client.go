@@ -15,26 +15,19 @@ import (
 // interacting with the ngc API. You should not instantiate this client directly,
 // and instead use the [NewClient] method instead.
 type Client struct {
-	Options                  []option.RequestOption
-	Orgs                     *OrgService
-	Users                    *UserService
-	SuperAdminUser           *SuperAdminUserService
-	SuperAdminOrg            *SuperAdminOrgService
-	SuperAdminOrgControllers *SuperAdminOrgControllerService
-	UsersManagement          *UsersManagementService
-	V2AdminOrgUsers          *V2AdminOrgUserService
-	V2AdminOrgTeams          *V2AdminOrgTeamService
-	V2AdminOrgTeamUsers      *V2AdminOrgTeamUserService
-	V2AdminOrgEntitlements   *V2AdminOrgEntitlementService
-	V2AdminEntitlements      *V2AdminEntitlementService
-	Services                 *ServiceService
-	V3OrgsUsers              *V3OrgsUserService
-	V3OrgsTeamsUsers         *V3OrgsTeamsUserService
-	V3Orgs                   *V3OrgService
-	Roles                    *RoleService
-	PublicKeys               *PublicKeyService
-	Health                   *HealthService
-	SwaggerResources         *SwaggerResourceService
+	Options          []option.RequestOption
+	Orgs             *OrgService
+	Users            *UserService
+	Admin            *AdminService
+	UsersManagement  *UsersManagementService
+	Services         *ServiceService
+	V3OrgsUsers      *V3OrgsUserService
+	V3OrgsTeamsUsers *V3OrgsTeamsUserService
+	V3Orgs           *V3OrgService
+	Roles            *RoleService
+	PublicKeys       *PublicKeyService
+	Health           *HealthService
+	SwaggerResources *SwaggerResourceService
 }
 
 // NewClient generates a new client with the default option read from the
@@ -52,15 +45,8 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r.Orgs = NewOrgService(opts...)
 	r.Users = NewUserService(opts...)
-	r.SuperAdminUser = NewSuperAdminUserService(opts...)
-	r.SuperAdminOrg = NewSuperAdminOrgService(opts...)
-	r.SuperAdminOrgControllers = NewSuperAdminOrgControllerService(opts...)
+	r.Admin = NewAdminService(opts...)
 	r.UsersManagement = NewUsersManagementService(opts...)
-	r.V2AdminOrgUsers = NewV2AdminOrgUserService(opts...)
-	r.V2AdminOrgTeams = NewV2AdminOrgTeamService(opts...)
-	r.V2AdminOrgTeamUsers = NewV2AdminOrgTeamUserService(opts...)
-	r.V2AdminOrgEntitlements = NewV2AdminOrgEntitlementService(opts...)
-	r.V2AdminEntitlements = NewV2AdminEntitlementService(opts...)
 	r.Services = NewServiceService(opts...)
 	r.V3OrgsUsers = NewV3OrgsUserService(opts...)
 	r.V3OrgsTeamsUsers = NewV3OrgsTeamsUserService(opts...)
