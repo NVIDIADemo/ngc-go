@@ -15,7 +15,7 @@ import (
 	"github.com/NVIDIADemo/ngc-go/option"
 )
 
-func TestAdminOrgOffboardedListWithOptionalParams(t *testing.T) {
+func TestAdminEntitlementGetAllWithOptionalParams(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("abc"))
@@ -26,9 +26,9 @@ func TestAdminOrgOffboardedListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAuthToken("My Auth Token"),
 	)
-	resp, err := client.Admin.Orgs.Offboarded.List(context.TODO(), ngc.AdminOrgOffboardedListParams{
-		PageNumber: ngc.F(int64(0)),
-		PageSize:   ngc.F(int64(0)),
+	resp, err := client.Admin.Entitlements.GetAll(context.TODO(), ngc.AdminEntitlementGetAllParams{
+		IsPaidSubscription: ngc.F(true),
+		ProductName:        ngc.F("product-name"),
 	})
 	if err != nil {
 		var apierr *ngc.Error

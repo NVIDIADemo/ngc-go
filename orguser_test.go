@@ -48,8 +48,6 @@ func TestOrgUserNewWithOptionalParams(t *testing.T) {
 				LastName:   ngc.F("lastName"),
 				Role:       ngc.F("role"),
 			}),
-			Ncid:      ngc.F("ncid"),
-			VisitorID: ngc.F("VisitorID"),
 		},
 	)
 	if err != nil {
@@ -149,7 +147,7 @@ func TestOrgUserDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrgUserAddRoleWithOptionalParams(t *testing.T) {
+func TestOrgUserAddRole(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -166,9 +164,7 @@ func TestOrgUserAddRoleWithOptionalParams(t *testing.T) {
 		"org-name",
 		"user-email-or-id",
 		ngc.OrgUserAddRoleParams{
-			Roles:     ngc.F([]string{"string", "string", "string"}),
-			Ncid:      ngc.F("ncid"),
-			VisitorID: ngc.F("VisitorID"),
+			Roles: ngc.F([]string{"string", "string", "string"}),
 		},
 	)
 	if err != nil {

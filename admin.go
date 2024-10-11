@@ -13,10 +13,10 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAdminService] method instead.
 type AdminService struct {
-	Options []option.RequestOption
-	Orgs    *AdminOrgService
-	Users   *AdminUserService
-	Org     *AdminOrgService
+	Options      []option.RequestOption
+	Entitlements *AdminEntitlementService
+	Orgs         *AdminOrgService
+	Users        *AdminUserService
 }
 
 // NewAdminService generates a new service that applies the given options to each
@@ -25,8 +25,8 @@ type AdminService struct {
 func NewAdminService(opts ...option.RequestOption) (r *AdminService) {
 	r = &AdminService{}
 	r.Options = opts
+	r.Entitlements = NewAdminEntitlementService(opts...)
 	r.Orgs = NewAdminOrgService(opts...)
 	r.Users = NewAdminUserService(opts...)
-	r.Org = NewAdminOrgService(opts...)
 	return
 }

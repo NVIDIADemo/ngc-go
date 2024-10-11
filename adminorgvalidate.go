@@ -33,8 +33,9 @@ func NewAdminOrgValidateService(opts ...option.RequestOption) (r *AdminOrgValida
 }
 
 // List all organizations that match the validate org params
-func (r *AdminOrgValidateService) GetAll(ctx context.Context, query AdminOrgValidateGetAllParams, opts ...option.RequestOption) (res *OrgList, err error) {
+func (r *AdminOrgValidateService) GetAll(ctx context.Context, query AdminOrgValidateGetAllParams, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v2/admin/org/validate"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return

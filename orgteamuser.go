@@ -57,7 +57,7 @@ func (r *OrgTeamUserService) Delete(ctx context.Context, orgName string, teamNam
 }
 
 // Invite if user does not exist, otherwise add role in team
-func (r *OrgTeamUserService) AddRole(ctx context.Context, orgName string, teamName string, userEmailOrID string, params OrgTeamUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
+func (r *OrgTeamUserService) AddRole(ctx context.Context, orgName string, teamName string, userEmailOrID string, body OrgTeamUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
@@ -72,7 +72,7 @@ func (r *OrgTeamUserService) AddRole(ctx context.Context, orgName string, teamNa
 		return
 	}
 	path := fmt.Sprintf("v3/orgs/%s/teams/%s/users/%s/add-role", orgName, teamName, userEmailOrID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -196,9 +196,7 @@ func (r OrgTeamUserDeleteParams) URLQuery() (v url.Values) {
 }
 
 type OrgTeamUserAddRoleParams struct {
-	Roles     param.Field[[]string] `query:"roles,required"`
-	Ncid      param.Field[string]   `cookie:"ncid"`
-	VisitorID param.Field[string]   `cookie:"VisitorID"`
+	Roles param.Field[[]string] `query:"roles,required"`
 }
 
 // URLQuery serializes [OrgTeamUserAddRoleParams]'s query parameters as

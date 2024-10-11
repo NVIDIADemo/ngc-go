@@ -7,11 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
-	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
-	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
 	"github.com/NVIDIADemo/ngc-go/shared"
@@ -36,75 +33,59 @@ func NewAdminUserService(opts ...option.RequestOption) (r *AdminUserService) {
 	return
 }
 
-// Get User details
-func (r *AdminUserService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *shared.User, err error) {
+// Sync crm id with user email (Super Admin privileges required)
+func (r *AdminUserService) CRMSync(ctx context.Context, id int64, opts ...option.RequestOption) (res *AdminUserCRMSyncResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := fmt.Sprintf("v2/admin/users/%v/crm-sync", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Migrate User Deprecated Roles.
+func (r *AdminUserService) MigrateDeprecatedRoles(ctx context.Context, id string, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
 	}
-	path := fmt.Sprintf("v2/admin/users/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
-// Invite an existing user again (Super Admin privileges required)
-func (r *AdminUserService) Invite(ctx context.Context, body AdminUserInviteParams, opts ...option.RequestOption) (res *shared.User, err error) {
-	opts = append(r.Options[:], opts...)
-	path := "v2/admin/users/invite"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
-}
-
-// What am I? Admin version, shows more info than regular endpoint
-func (r *AdminUserService) Me(ctx context.Context, query AdminUserMeParams, opts ...option.RequestOption) (res *shared.User, err error) {
-	opts = append(r.Options[:], opts...)
-	path := "v2/admin/users/me"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
-}
-
-// Backfill the org owner for individual users
-func (r *AdminUserService) OrgOwnerBackfill(ctx context.Context, userID int64, opts ...option.RequestOption) (res *AdminUserOrgOwnerBackfillResponse, err error) {
-	opts = append(r.Options[:], opts...)
-	path := fmt.Sprintf("v2/admin/users/%v/org-owner-backfill", userID)
+	path := fmt.Sprintf("v2/admin/users/%s/migrate-deprecated-roles", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
 	return
 }
 
-type AdminUserOrgOwnerBackfillResponse struct {
-	RequestStatus AdminUserOrgOwnerBackfillResponseRequestStatus `json:"requestStatus"`
-	JSON          adminUserOrgOwnerBackfillResponseJSON          `json:"-"`
+type AdminUserCRMSyncResponse struct {
+	RequestStatus AdminUserCRMSyncResponseRequestStatus `json:"requestStatus"`
+	JSON          adminUserCRMSyncResponseJSON          `json:"-"`
 }
 
-// adminUserOrgOwnerBackfillResponseJSON contains the JSON metadata for the struct
-// [AdminUserOrgOwnerBackfillResponse]
-type adminUserOrgOwnerBackfillResponseJSON struct {
+// adminUserCRMSyncResponseJSON contains the JSON metadata for the struct
+// [AdminUserCRMSyncResponse]
+type adminUserCRMSyncResponseJSON struct {
 	RequestStatus apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *AdminUserOrgOwnerBackfillResponse) UnmarshalJSON(data []byte) (err error) {
+func (r *AdminUserCRMSyncResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r adminUserOrgOwnerBackfillResponseJSON) RawJSON() string {
+func (r adminUserCRMSyncResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type AdminUserOrgOwnerBackfillResponseRequestStatus struct {
+type AdminUserCRMSyncResponseRequestStatus struct {
 	RequestID string `json:"requestId"`
 	ServerID  string `json:"serverId"`
 	// Describes response status reported by the server.
-	StatusCode        AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode `json:"statusCode"`
-	StatusDescription string                                                   `json:"statusDescription"`
-	JSON              adminUserOrgOwnerBackfillResponseRequestStatusJSON       `json:"-"`
+	StatusCode        AdminUserCRMSyncResponseRequestStatusStatusCode `json:"statusCode"`
+	StatusDescription string                                          `json:"statusDescription"`
+	JSON              adminUserCRMSyncResponseRequestStatusJSON       `json:"-"`
 }
 
-// adminUserOrgOwnerBackfillResponseRequestStatusJSON contains the JSON metadata
-// for the struct [AdminUserOrgOwnerBackfillResponseRequestStatus]
-type adminUserOrgOwnerBackfillResponseRequestStatusJSON struct {
+// adminUserCRMSyncResponseRequestStatusJSON contains the JSON metadata for the
+// struct [AdminUserCRMSyncResponseRequestStatus]
+type adminUserCRMSyncResponseRequestStatusJSON struct {
 	RequestID         apijson.Field
 	ServerID          apijson.Field
 	StatusCode        apijson.Field
@@ -113,72 +94,46 @@ type adminUserOrgOwnerBackfillResponseRequestStatusJSON struct {
 	ExtraFields       map[string]apijson.Field
 }
 
-func (r *AdminUserOrgOwnerBackfillResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
+func (r *AdminUserCRMSyncResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r adminUserOrgOwnerBackfillResponseRequestStatusJSON) RawJSON() string {
+func (r adminUserCRMSyncResponseRequestStatusJSON) RawJSON() string {
 	return r.raw
 }
 
 // Describes response status reported by the server.
-type AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode string
+type AdminUserCRMSyncResponseRequestStatusStatusCode string
 
 const (
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnknown                    AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "UNKNOWN"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeSuccess                    AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "SUCCESS"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnauthorized               AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "UNAUTHORIZED"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodePaymentRequired            AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeForbidden                  AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "FORBIDDEN"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeTimeout                    AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "TIMEOUT"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeExists                     AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "EXISTS"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeNotFound                   AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "NOT_FOUND"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInternalError              AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "INTERNAL_ERROR"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequest             AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestVersion      AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestData         AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeMethodNotAllowed           AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeConflict                   AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "CONFLICT"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnprocessableEntity        AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeTooManyRequests            AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInsufficientStorage        AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeServiceUnavailable         AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodePayloadTooLarge            AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeNotAcceptable              AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnavailableForLegalReasons AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
-	AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeBadGateway                 AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode = "BAD_GATEWAY"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeUnknown                    AdminUserCRMSyncResponseRequestStatusStatusCode = "UNKNOWN"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeSuccess                    AdminUserCRMSyncResponseRequestStatusStatusCode = "SUCCESS"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeUnauthorized               AdminUserCRMSyncResponseRequestStatusStatusCode = "UNAUTHORIZED"
+	AdminUserCRMSyncResponseRequestStatusStatusCodePaymentRequired            AdminUserCRMSyncResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeForbidden                  AdminUserCRMSyncResponseRequestStatusStatusCode = "FORBIDDEN"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeTimeout                    AdminUserCRMSyncResponseRequestStatusStatusCode = "TIMEOUT"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeExists                     AdminUserCRMSyncResponseRequestStatusStatusCode = "EXISTS"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeNotFound                   AdminUserCRMSyncResponseRequestStatusStatusCode = "NOT_FOUND"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeInternalError              AdminUserCRMSyncResponseRequestStatusStatusCode = "INTERNAL_ERROR"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequest             AdminUserCRMSyncResponseRequestStatusStatusCode = "INVALID_REQUEST"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequestVersion      AdminUserCRMSyncResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequestData         AdminUserCRMSyncResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeMethodNotAllowed           AdminUserCRMSyncResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeConflict                   AdminUserCRMSyncResponseRequestStatusStatusCode = "CONFLICT"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeUnprocessableEntity        AdminUserCRMSyncResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeTooManyRequests            AdminUserCRMSyncResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeInsufficientStorage        AdminUserCRMSyncResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeServiceUnavailable         AdminUserCRMSyncResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
+	AdminUserCRMSyncResponseRequestStatusStatusCodePayloadTooLarge            AdminUserCRMSyncResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeNotAcceptable              AdminUserCRMSyncResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeUnavailableForLegalReasons AdminUserCRMSyncResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
+	AdminUserCRMSyncResponseRequestStatusStatusCodeBadGateway                 AdminUserCRMSyncResponseRequestStatusStatusCode = "BAD_GATEWAY"
 )
 
-func (r AdminUserOrgOwnerBackfillResponseRequestStatusStatusCode) IsKnown() bool {
+func (r AdminUserCRMSyncResponseRequestStatusStatusCode) IsKnown() bool {
 	switch r {
-	case AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnknown, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeSuccess, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnauthorized, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodePaymentRequired, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeForbidden, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeTimeout, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeExists, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeNotFound, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInternalError, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequest, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestVersion, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestData, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeMethodNotAllowed, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeConflict, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnprocessableEntity, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeTooManyRequests, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeInsufficientStorage, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeServiceUnavailable, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodePayloadTooLarge, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeNotAcceptable, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminUserOrgOwnerBackfillResponseRequestStatusStatusCodeBadGateway:
+	case AdminUserCRMSyncResponseRequestStatusStatusCodeUnknown, AdminUserCRMSyncResponseRequestStatusStatusCodeSuccess, AdminUserCRMSyncResponseRequestStatusStatusCodeUnauthorized, AdminUserCRMSyncResponseRequestStatusStatusCodePaymentRequired, AdminUserCRMSyncResponseRequestStatusStatusCodeForbidden, AdminUserCRMSyncResponseRequestStatusStatusCodeTimeout, AdminUserCRMSyncResponseRequestStatusStatusCodeExists, AdminUserCRMSyncResponseRequestStatusStatusCodeNotFound, AdminUserCRMSyncResponseRequestStatusStatusCodeInternalError, AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequest, AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequestVersion, AdminUserCRMSyncResponseRequestStatusStatusCodeInvalidRequestData, AdminUserCRMSyncResponseRequestStatusStatusCodeMethodNotAllowed, AdminUserCRMSyncResponseRequestStatusStatusCodeConflict, AdminUserCRMSyncResponseRequestStatusStatusCodeUnprocessableEntity, AdminUserCRMSyncResponseRequestStatusStatusCodeTooManyRequests, AdminUserCRMSyncResponseRequestStatusStatusCodeInsufficientStorage, AdminUserCRMSyncResponseRequestStatusStatusCodeServiceUnavailable, AdminUserCRMSyncResponseRequestStatusStatusCodePayloadTooLarge, AdminUserCRMSyncResponseRequestStatusStatusCodeNotAcceptable, AdminUserCRMSyncResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminUserCRMSyncResponseRequestStatusStatusCodeBadGateway:
 		return true
 	}
 	return false
-}
-
-type AdminUserInviteParams struct {
-	Email param.Field[string] `query:"email,required"`
-	// Boolean to send email notification, default is true
-	SendEmail param.Field[bool] `query:"send-email"`
-}
-
-// URLQuery serializes [AdminUserInviteParams]'s query parameters as `url.Values`.
-func (r AdminUserInviteParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type AdminUserMeParams struct {
-	OrgName param.Field[string] `query:"org-name"`
-}
-
-// URLQuery serializes [AdminUserMeParams]'s query parameters as `url.Values`.
-func (r AdminUserMeParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
 }

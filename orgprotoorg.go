@@ -32,10 +32,10 @@ func NewOrgProtoOrgService(opts ...option.RequestOption) (r *OrgProtoOrgService)
 }
 
 // Create a new organization based on the org info retrieved from the ProtoOrg.
-func (r *OrgProtoOrgService) New(ctx context.Context, params OrgProtoOrgNewParams, opts ...option.RequestOption) (res *OrgResponse, err error) {
+func (r *OrgProtoOrgService) New(ctx context.Context, body OrgProtoOrgNewParams, opts ...option.RequestOption) (res *OrgResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v3/orgs/proto-org"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -73,8 +73,6 @@ type OrgProtoOrgNewParams struct {
 	// Send email to org owner or not. Default is true
 	SendEmail param.Field[bool]                     `json:"sendEmail"`
 	Type      param.Field[OrgProtoOrgNewParamsType] `json:"type"`
-	Ncid      param.Field[string]                   `cookie:"ncid"`
-	VisitorID param.Field[string]                   `cookie:"VisitorID"`
 }
 
 func (r OrgProtoOrgNewParams) MarshalJSON() (data []byte, err error) {

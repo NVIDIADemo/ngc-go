@@ -43,7 +43,7 @@ func TestOrgTeamUserDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrgTeamUserAddRoleWithOptionalParams(t *testing.T) {
+func TestOrgTeamUserAddRole(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -61,9 +61,7 @@ func TestOrgTeamUserAddRoleWithOptionalParams(t *testing.T) {
 		"team-name",
 		"user-email-or-id",
 		ngc.OrgTeamUserAddRoleParams{
-			Roles:     ngc.F([]string{"string", "string", "string"}),
-			Ncid:      ngc.F("ncid"),
-			VisitorID: ngc.F("VisitorID"),
+			Roles: ngc.F([]string{"string", "string", "string"}),
 		},
 	)
 	if err != nil {

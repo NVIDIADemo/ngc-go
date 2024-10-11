@@ -13,7 +13,7 @@ import (
 	"github.com/NVIDIADemo/ngc-go/option"
 )
 
-func TestAdminUserGet(t *testing.T) {
+func TestAdminUserCRMSync(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,7 +25,7 @@ func TestAdminUserGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAuthToken("My Auth Token"),
 	)
-	_, err := client.Admin.Users.Get(context.TODO(), "id")
+	_, err := client.Admin.Users.CRMSync(context.TODO(), int64(0))
 	if err != nil {
 		var apierr *ngc.Error
 		if errors.As(err, &apierr) {
@@ -35,7 +35,7 @@ func TestAdminUserGet(t *testing.T) {
 	}
 }
 
-func TestAdminUserInviteWithOptionalParams(t *testing.T) {
+func TestAdminUserMigrateDeprecatedRoles(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -47,56 +47,7 @@ func TestAdminUserInviteWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAuthToken("My Auth Token"),
 	)
-	_, err := client.Admin.Users.Invite(context.TODO(), ngc.AdminUserInviteParams{
-		Email:     ngc.F("email"),
-		SendEmail: ngc.F(true),
-	})
-	if err != nil {
-		var apierr *ngc.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestAdminUserMeWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := ngc.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
-	)
-	_, err := client.Admin.Users.Me(context.TODO(), ngc.AdminUserMeParams{
-		OrgName: ngc.F("org-name"),
-	})
-	if err != nil {
-		var apierr *ngc.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestAdminUserOrgOwnerBackfill(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := ngc.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
-	)
-	_, err := client.Admin.Users.OrgOwnerBackfill(context.TODO(), int64(0))
+	_, err := client.Admin.Users.MigrateDeprecatedRoles(context.TODO(), "id")
 	if err != nil {
 		var apierr *ngc.Error
 		if errors.As(err, &apierr) {

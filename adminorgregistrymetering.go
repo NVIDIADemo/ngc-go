@@ -13,7 +13,6 @@ import (
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
-	"github.com/NVIDIADemo/ngc-go/shared"
 )
 
 // AdminOrgRegistryMeteringService contains methods and other services that help
@@ -36,8 +35,9 @@ func NewAdminOrgRegistryMeteringService(opts ...option.RequestOption) (r *AdminO
 }
 
 // Run registry metering downsample
-func (r *AdminOrgRegistryMeteringService) Downsample(ctx context.Context, orgName string, query AdminOrgRegistryMeteringDownsampleParams, opts ...option.RequestOption) (res *shared.MeteringResultList, err error) {
+func (r *AdminOrgRegistryMeteringService) Downsample(ctx context.Context, orgName string, query AdminOrgRegistryMeteringDownsampleParams, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
 		return

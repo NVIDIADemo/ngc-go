@@ -216,6 +216,21 @@ const MeteringResultListRequestStatusStatusCodeUnavailableForLegalReasons = shar
 // This is an alias to an internal value.
 const MeteringResultListRequestStatusStatusCodeBadGateway = shared.MeteringResultListRequestStatusStatusCodeBadGateway
 
+// Information about the team
+//
+// This is an alias to an internal type.
+type Team = shared.Team
+
+// Infinity manager setting definition
+//
+// This is an alias to an internal type.
+type TeamInfinityManagerSettings = shared.TeamInfinityManagerSettings
+
+// Repo scan setting definition
+//
+// This is an alias to an internal type.
+type TeamRepoScanSettings = shared.TeamRepoScanSettings
+
 // listing of all teams
 //
 // This is an alias to an internal type.
@@ -299,21 +314,6 @@ const TeamListRequestStatusStatusCodeUnavailableForLegalReasons = shared.TeamLis
 
 // This is an alias to an internal value.
 const TeamListRequestStatusStatusCodeBadGateway = shared.TeamListRequestStatusStatusCodeBadGateway
-
-// Information about the team
-//
-// This is an alias to an internal type.
-type TeamListTeam = shared.TeamListTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type TeamListTeamsInfinityManagerSettings = shared.TeamListTeamsInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type TeamListTeamsRepoScanSettings = shared.TeamListTeamsRepoScanSettings
 
 // about one user
 //
@@ -558,21 +558,6 @@ type UserUserRolesOrgUsersInfo = shared.UserUserRolesOrgUsersInfo
 // This is an alias to an internal type.
 type UserUserRolesTargetSystemUserIdentifier = shared.UserUserRolesTargetSystemUserIdentifier
 
-// Information about the team
-//
-// This is an alias to an internal type.
-type UserUserRolesTeam = shared.UserUserRolesTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type UserUserRolesTeamInfinityManagerSettings = shared.UserUserRolesTeamInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type UserUserRolesTeamRepoScanSettings = shared.UserUserRolesTeamRepoScanSettings
-
 // represents user storage quota for a given ace and available unused storage
 //
 // This is an alias to an internal type.
@@ -582,107 +567,6 @@ type UserUserStorageQuota = shared.UserUserStorageQuota
 //
 // This is an alias to an internal type.
 type UserUserUserMetadata = shared.UserUserUserMetadata
-
-// Response for a list of user invitations.
-//
-// This is an alias to an internal type.
-type UserInvitationList = shared.UserInvitationList
-
-// User invitation to an NGC org or team
-//
-// This is an alias to an internal type.
-type UserInvitationListInvitation = shared.UserInvitationListInvitation
-
-// Type of invitation. The invitation is either to an organization or to a team
-// within organization.
-//
-// This is an alias to an internal type.
-type UserInvitationListInvitationsType = shared.UserInvitationListInvitationsType
-
-// This is an alias to an internal value.
-const UserInvitationListInvitationsTypeOrganization = shared.UserInvitationListInvitationsTypeOrganization
-
-// This is an alias to an internal value.
-const UserInvitationListInvitationsTypeTeam = shared.UserInvitationListInvitationsTypeTeam
-
-// object that describes the pagination information
-//
-// This is an alias to an internal type.
-type UserInvitationListPaginationInfo = shared.UserInvitationListPaginationInfo
-
-// This is an alias to an internal type.
-type UserInvitationListRequestStatus = shared.UserInvitationListRequestStatus
-
-// Describes response status reported by the server.
-//
-// This is an alias to an internal type.
-type UserInvitationListRequestStatusStatusCode = shared.UserInvitationListRequestStatusStatusCode
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeUnknown = shared.UserInvitationListRequestStatusStatusCodeUnknown
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeSuccess = shared.UserInvitationListRequestStatusStatusCodeSuccess
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeUnauthorized = shared.UserInvitationListRequestStatusStatusCodeUnauthorized
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodePaymentRequired = shared.UserInvitationListRequestStatusStatusCodePaymentRequired
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeForbidden = shared.UserInvitationListRequestStatusStatusCodeForbidden
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeTimeout = shared.UserInvitationListRequestStatusStatusCodeTimeout
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeExists = shared.UserInvitationListRequestStatusStatusCodeExists
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeNotFound = shared.UserInvitationListRequestStatusStatusCodeNotFound
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeInternalError = shared.UserInvitationListRequestStatusStatusCodeInternalError
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeInvalidRequest = shared.UserInvitationListRequestStatusStatusCodeInvalidRequest
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeInvalidRequestVersion = shared.UserInvitationListRequestStatusStatusCodeInvalidRequestVersion
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeInvalidRequestData = shared.UserInvitationListRequestStatusStatusCodeInvalidRequestData
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeMethodNotAllowed = shared.UserInvitationListRequestStatusStatusCodeMethodNotAllowed
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeConflict = shared.UserInvitationListRequestStatusStatusCodeConflict
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeUnprocessableEntity = shared.UserInvitationListRequestStatusStatusCodeUnprocessableEntity
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeTooManyRequests = shared.UserInvitationListRequestStatusStatusCodeTooManyRequests
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeInsufficientStorage = shared.UserInvitationListRequestStatusStatusCodeInsufficientStorage
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeServiceUnavailable = shared.UserInvitationListRequestStatusStatusCodeServiceUnavailable
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodePayloadTooLarge = shared.UserInvitationListRequestStatusStatusCodePayloadTooLarge
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeNotAcceptable = shared.UserInvitationListRequestStatusStatusCodeNotAcceptable
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeUnavailableForLegalReasons = shared.UserInvitationListRequestStatusStatusCodeUnavailableForLegalReasons
-
-// This is an alias to an internal value.
-const UserInvitationListRequestStatusStatusCodeBadGateway = shared.UserInvitationListRequestStatusStatusCodeBadGateway
 
 // Response for List User reponse
 //
@@ -911,21 +795,6 @@ type UserListUsersRolesOrgUsersInfo = shared.UserListUsersRolesOrgUsersInfo
 //
 // This is an alias to an internal type.
 type UserListUsersRolesTargetSystemUserIdentifier = shared.UserListUsersRolesTargetSystemUserIdentifier
-
-// Information about the team
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeam = shared.UserListUsersRolesTeam
-
-// Infinity manager setting definition
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeamInfinityManagerSettings = shared.UserListUsersRolesTeamInfinityManagerSettings
-
-// Repo scan setting definition
-//
-// This is an alias to an internal type.
-type UserListUsersRolesTeamRepoScanSettings = shared.UserListUsersRolesTeamRepoScanSettings
 
 // represents user storage quota for a given ace and available unused storage
 //

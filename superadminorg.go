@@ -34,11 +34,11 @@ func NewSuperAdminOrgService(opts ...option.RequestOption) (r *SuperAdminOrgServ
 }
 
 // Create a new organization. (SuperAdmin privileges required)
-func (r *SuperAdminOrgService) New(ctx context.Context, params SuperAdminOrgNewParams, opts ...option.RequestOption) (res *http.Response, err error) {
+func (r *SuperAdminOrgService) New(ctx context.Context, body SuperAdminOrgNewParams, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v2/admin/orgs"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -70,8 +70,6 @@ type SuperAdminOrgNewParams struct {
 	// Send email to org owner or not. Default is true
 	SendEmail param.Field[bool]                       `json:"sendEmail"`
 	Type      param.Field[SuperAdminOrgNewParamsType] `json:"type"`
-	Ncid      param.Field[string]                     `cookie:"ncid"`
-	VisitorID param.Field[string]                     `cookie:"VisitorID"`
 }
 
 func (r SuperAdminOrgNewParams) MarshalJSON() (data []byte, err error) {
