@@ -19,7 +19,6 @@ type Client struct {
 	Orgs             *OrgService
 	Me               *MeService
 	Admin            *AdminService
-	UsersManagement  *UsersManagementService
 	Services         *ServiceService
 	Roles            *RoleService
 	PublicKeys       *PublicKeyService
@@ -43,7 +42,6 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Orgs = NewOrgService(opts...)
 	r.Me = NewMeService(opts...)
 	r.Admin = NewAdminService(opts...)
-	r.UsersManagement = NewUsersManagementService(opts...)
 	r.Services = NewServiceService(opts...)
 	r.Roles = NewRoleService(opts...)
 	r.PublicKeys = NewPublicKeyService(opts...)
