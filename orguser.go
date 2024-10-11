@@ -301,7 +301,7 @@ type OrgUserListResponseRole struct {
 	// Information about the user who is attempting to run the job
 	TargetSystemUserIdentifier OrgUserListResponseRolesTargetSystemUserIdentifier `json:"targetSystemUserIdentifier"`
 	// Information about the team
-	Team OrgUserListResponseRolesTeam `json:"team"`
+	Team shared.Team `json:"team"`
 	// List of team role types that the user have
 	TeamRoles []string                    `json:"teamRoles"`
 	JSON      orgUserListResponseRoleJSON `json:"-"`
@@ -779,108 +779,6 @@ func (r *OrgUserListResponseRolesTargetSystemUserIdentifier) UnmarshalJSON(data 
 }
 
 func (r orgUserListResponseRolesTargetSystemUserIdentifierJSON) RawJSON() string {
-	return r.raw
-}
-
-// Information about the team
-type OrgUserListResponseRolesTeam struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings OrgUserListResponseRolesTeamInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings OrgUserListResponseRolesTeamRepoScanSettings `json:"repoScanSettings"`
-	JSON             orgUserListResponseRolesTeamJSON             `json:"-"`
-}
-
-// orgUserListResponseRolesTeamJSON contains the JSON metadata for the struct
-// [OrgUserListResponseRolesTeam]
-type orgUserListResponseRolesTeamJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeam) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type OrgUserListResponseRolesTeamInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                                    `json:"infinityManagerEnableTeamOverride"`
-	JSON                              orgUserListResponseRolesTeamInfinityManagerSettingsJSON `json:"-"`
-}
-
-// orgUserListResponseRolesTeamInfinityManagerSettingsJSON contains the JSON
-// metadata for the struct [OrgUserListResponseRolesTeamInfinityManagerSettings]
-type orgUserListResponseRolesTeamInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type OrgUserListResponseRolesTeamRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                             `json:"repoScanShowResults"`
-	JSON                orgUserListResponseRolesTeamRepoScanSettingsJSON `json:"-"`
-}
-
-// orgUserListResponseRolesTeamRepoScanSettingsJSON contains the JSON metadata for
-// the struct [OrgUserListResponseRolesTeamRepoScanSettings]
-type orgUserListResponseRolesTeamRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamRepoScanSettingsJSON) RawJSON() string {
 	return r.raw
 }
 
