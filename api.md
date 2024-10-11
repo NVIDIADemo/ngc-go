@@ -4,7 +4,6 @@
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#MeteringResultList">MeteringResultList</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#TeamList">TeamList</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#UserInvitationList">UserInvitationList</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#UserList">UserList</a>
 
 # Orgs
@@ -48,7 +47,6 @@ Methods:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#TeamResponse">TeamResponse</a>
 - <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamListResponse">OrgTeamListResponse</a>
 
 Methods:
@@ -252,75 +250,6 @@ Methods:
 
 - <code title="get /v2/users/me">client.UsersManagement.Me.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UsersManagementMeService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UsersManagementMeGetParams">UsersManagementMeGetParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /v2/users/me">client.UsersManagement.Me.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UsersManagementMeService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#UsersManagementMeUpdateParams">UsersManagementMeUpdateParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Org
-
-## Users
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserRemoveResponse">OrgUserRemoveResponse</a>
-
-Methods:
-
-- <code title="get /v2/org/{org-name}/users/{id}">client.Org.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserGetParams">OrgUserGetParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="patch /v2/org/{org-name}/users/{id}/add-role">client.Org.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserService.AddRole">AddRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserAddRoleParams">OrgUserAddRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v2/org/{org-name}/users/{id}/invite">client.Org.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserService.Invite">Invite</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInviteParams">OrgUserInviteParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v2/org/{org-name}/users/{id}">client.Org.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserService.Remove">Remove</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserRemoveParams">OrgUserRemoveParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserRemoveResponse">OrgUserRemoveResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v2/org/{org-name}/users/{id}/remove-role">client.Org.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserService.RemoveRole">RemoveRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserRemoveRoleParams">OrgUserRemoveRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-### Invitations
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationListResponse">OrgUserInvitationListResponse</a>
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationDeleteResponse">OrgUserInvitationDeleteResponse</a>
-
-Methods:
-
-- <code title="get /v2/org/{org-name}/users/invitations">client.Org.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationListParams">OrgUserInvitationListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberInvitations">PageNumberInvitations</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#OrgUserInvitationListResponse">OrgUserInvitationListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v2/org/{org-name}/users/invitations/{id}">client.Org.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationDeleteResponse">OrgUserInvitationDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v2/org/{org-name}/users/invitations/{id}/resend-invitation-email">client.Org.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgUserInvitationService.InviteResend">InviteResend</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-## Teams
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamDeleteResponse">OrgTeamDeleteResponse</a>
-
-Methods:
-
-- <code title="get /v2/org/{org-name}/teams/{team-name}">client.Org.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#TeamResponse">TeamResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="patch /v2/org/{org-name}/teams/{team-name}">client.Org.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUpdateParams">OrgTeamUpdateParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#TeamResponse">TeamResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v2/org/{org-name}/teams/{team-name}">client.Org.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamDeleteResponse">OrgTeamDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-### Users
-
-Methods:
-
-- <code title="patch /v2/org/{org-name}/team/{team-name}/users/{id}/add-role">client.Org.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserService.AddRole">AddRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserAddRoleParams">OrgTeamUserAddRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="patch /v2/org/{org-name}/team/{team-name}/users/{id}/update-role">client.Org.Teams.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserService.UpdateRole">UpdateRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserUpdateRoleParams">OrgTeamUserUpdateRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-## Team
-
-### Users
-
-Methods:
-
-- <code title="delete /v2/org/{org-name}/team/{team-name}/users/{id}/remove-role">client.Org.Team.Users.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserService.RemoveRole">RemoveRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserRemoveRoleParams">OrgTeamUserRemoveRoleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-#### Invitations
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationListResponse">OrgTeamUserInvitationListResponse</a>
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationDeleteResponse">OrgTeamUserInvitationDeleteResponse</a>
-
-Methods:
-
-- <code title="get /v2/org/{org-name}/team/{team-name}/users/invitations">client.Org.Team.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationListParams">OrgTeamUserInvitationListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberInvitations">PageNumberInvitations</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#OrgTeamUserInvitationListResponse">OrgTeamUserInvitationListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v2/org/{org-name}/team/{team-name}/users/invitations/{id}">client.Org.Team.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationDeleteResponse">OrgTeamUserInvitationDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v2/org/{org-name}/team/{team-name}/users/invitations/{id}/resend-invitation-email">client.Org.Team.Users.Invitations.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgTeamUserInvitationService.InviteResend">InviteResend</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, teamName <a href="https://pkg.go.dev/builtin#string">string</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#User">User</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # V2AdminOrgUsers
 
