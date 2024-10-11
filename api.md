@@ -127,14 +127,10 @@ Methods:
 
 ## Orgs
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListResponse">AdminOrgListResponse</a>
-
 Methods:
 
 - <code title="post /v3/admin/orgs">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgNewParams">AdminOrgNewParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v2/admin/org">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListParams">AdminOrgListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberOrganizations">PageNumberOrganizations</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListResponse">AdminOrgListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/admin/org">client.Admin.Orgs.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListParams">AdminOrgListParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### NcaIDs
 
@@ -144,23 +140,15 @@ Methods:
 
 ### Offboarded
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedListResponse">AdminOrgOffboardedListResponse</a>
-
 Methods:
 
-- <code title="get /v2/admin/orgs/offboarded">client.Admin.Orgs.Offboarded.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedListParams">AdminOrgOffboardedListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberOrganizations">PageNumberOrganizations</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedListResponse">AdminOrgOffboardedListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/admin/orgs/offboarded">client.Admin.Orgs.Offboarded.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgOffboardedListParams">AdminOrgOffboardedListParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Teams
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamListResponse">AdminOrgTeamListResponse</a>
-
 Methods:
 
-- <code title="get /v2/admin/org/{org-name}/teams">client.Admin.Orgs.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamListParams">AdminOrgTeamListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberTeams">PageNumberTeams</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#AdminOrgTeamListResponse">AdminOrgTeamListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/admin/org/{org-name}/teams">client.Admin.Orgs.Teams.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgTeamListParams">AdminOrgTeamListParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Users
 
@@ -179,15 +167,11 @@ Methods:
 
 ## Org
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListResponse">AdminOrgListResponse</a>
-
 Methods:
 
 - <code title="get /v2/admin/org/{org-name}">client.Admin.Org.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /v2/admin/org/{org-name}">client.Admin.Org.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgUpdateParams">AdminOrgUpdateParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v3/admin/org">client.Admin.Org.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListParams">AdminOrgListParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/internal/pagination#PageNumberOrganizations">PageNumberOrganizations</a>[<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListResponse">AdminOrgListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v3/admin/org">client.Admin.Org.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgListParams">AdminOrgListParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Users
 
@@ -202,13 +186,13 @@ Methods:
 
 Methods:
 
-- <code title="get /v2/admin/org/{org-name}/registry/metering/downsample">client.Admin.Org.Registry.Metering.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgRegistryMeteringService.Downsample">Downsample</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgRegistryMeteringDownsampleParams">AdminOrgRegistryMeteringDownsampleParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go/shared#MeteringResultList">MeteringResultList</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/admin/org/{org-name}/registry/metering/downsample">client.Admin.Org.Registry.Metering.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgRegistryMeteringService.Downsample">Downsample</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, orgName <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgRegistryMeteringDownsampleParams">AdminOrgRegistryMeteringDownsampleParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Validate
 
 Methods:
 
-- <code title="get /v2/admin/org/validate">client.Admin.Org.Validate.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateService.GetAll">GetAll</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateGetAllParams">AdminOrgValidateGetAllParams</a>) (<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#OrgList">OrgList</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v2/admin/org/validate">client.Admin.Org.Validate.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateService.GetAll">GetAll</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go">ngc</a>.<a href="https://pkg.go.dev/github.com/NVIDIADemo/ngc-go#AdminOrgValidateGetAllParams">AdminOrgValidateGetAllParams</a>) (http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Team
 
