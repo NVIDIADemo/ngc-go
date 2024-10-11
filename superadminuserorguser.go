@@ -49,7 +49,7 @@ func (r *SuperAdminUserOrgUserService) New(ctx context.Context, orgName string, 
 }
 
 // Add existing User to an Org
-func (r *SuperAdminUserOrgUserService) Add(ctx context.Context, orgName string, id string, params SuperAdminUserOrgUserAddParams, opts ...option.RequestOption) (res *shared.User, err error) {
+func (r *SuperAdminUserOrgUserService) Add(ctx context.Context, orgName string, id string, body SuperAdminUserOrgUserAddParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
@@ -60,7 +60,7 @@ func (r *SuperAdminUserOrgUserService) Add(ctx context.Context, orgName string, 
 		return
 	}
 	path := fmt.Sprintf("v2/admin/org/%s/users/%s", orgName, id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -187,8 +187,6 @@ type SuperAdminUserOrgUserNewParams struct {
 	SalesforceContactJobRole param.Field[string] `json:"salesforceContactJobRole"`
 	// Metadata information about the user.
 	UserMetadata param.Field[SuperAdminUserOrgUserNewParamsUserMetadata] `json:"userMetadata"`
-	Ncid         param.Field[string]                                     `cookie:"ncid"`
-	VisitorID    param.Field[string]                                     `cookie:"VisitorID"`
 }
 
 func (r SuperAdminUserOrgUserNewParams) MarshalJSON() (data []byte, err error) {
@@ -230,8 +228,6 @@ func (r SuperAdminUserOrgUserNewParamsUserMetadata) MarshalJSON() (data []byte, 
 
 type SuperAdminUserOrgUserAddParams struct {
 	UserRoleDefaultsToRegistryRead param.Field[string] `query:"user role, defaults to REGISTRY_READ"`
-	Ncid                           param.Field[string] `cookie:"ncid"`
-	VisitorID                      param.Field[string] `cookie:"VisitorID"`
 }
 
 // URLQuery serializes [SuperAdminUserOrgUserAddParams]'s query parameters as
