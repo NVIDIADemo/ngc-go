@@ -11,10 +11,10 @@ import (
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
 	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
-	"github.com/NVIDIADemo/ngc-go/internal/pagination"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
+	"github.com/NVIDIADemo/ngc-go/packages/pagination"
 )
 
 // OrgService contains methods and other services that help with interacting with
@@ -51,10 +51,10 @@ func NewOrgService(opts ...option.RequestOption) (r *OrgService) {
 }
 
 // Create a new organization based on the org info provided in the request.
-func (r *OrgService) New(ctx context.Context, params OrgNewParams, opts ...option.RequestOption) (res *OrgResponse, err error) {
+func (r *OrgService) New(ctx context.Context, body OrgNewParams, opts ...option.RequestOption) (res *OrgResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v3/orgs"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -1600,8 +1600,6 @@ type OrgNewParams struct {
 	// Send email to org owner or not. Default is true
 	SendEmail param.Field[bool]             `json:"sendEmail"`
 	Type      param.Field[OrgNewParamsType] `json:"type"`
-	Ncid      param.Field[string]           `cookie:"ncid"`
-	VisitorID param.Field[string]           `cookie:"VisitorID"`
 }
 
 func (r OrgNewParams) MarshalJSON() (data []byte, err error) {

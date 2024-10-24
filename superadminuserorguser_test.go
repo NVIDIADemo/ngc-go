@@ -48,8 +48,6 @@ func TestSuperAdminUserOrgUserNewWithOptionalParams(t *testing.T) {
 				LastName:   ngc.F("lastName"),
 				Role:       ngc.F("role"),
 			}),
-			Ncid:      ngc.F("ncid"),
-			VisitorID: ngc.F("VisitorID"),
 		},
 	)
 	if err != nil {
@@ -79,8 +77,6 @@ func TestSuperAdminUserOrgUserAddWithOptionalParams(t *testing.T) {
 		"id",
 		ngc.SuperAdminUserOrgUserAddParams{
 			UserRoleDefaultsToRegistryRead: ngc.F("user role, defaults to REGISTRY_READ"),
-			Ncid:                           ngc.F("ncid"),
-			VisitorID:                      ngc.F("VisitorID"),
 		},
 	)
 	if err != nil {

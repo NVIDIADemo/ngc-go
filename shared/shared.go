@@ -356,12 +356,113 @@ func (r MeteringResultListRequestStatusStatusCode) IsKnown() bool {
 	return false
 }
 
+// Information about the team
+type Team struct {
+	// unique Id of this team.
+	ID int64 `json:"id"`
+	// description of the team
+	Description string `json:"description"`
+	// Infinity manager setting definition
+	InfinityManagerSettings TeamInfinityManagerSettings `json:"infinityManagerSettings"`
+	// indicates if the team is deleted or not
+	IsDeleted bool `json:"isDeleted"`
+	// team name
+	Name string `json:"name"`
+	// Repo scan setting definition
+	RepoScanSettings TeamRepoScanSettings `json:"repoScanSettings"`
+	JSON             teamJSON             `json:"-"`
+}
+
+// teamJSON contains the JSON metadata for the struct [Team]
+type teamJSON struct {
+	ID                      apijson.Field
+	Description             apijson.Field
+	InfinityManagerSettings apijson.Field
+	IsDeleted               apijson.Field
+	Name                    apijson.Field
+	RepoScanSettings        apijson.Field
+	raw                     string
+	ExtraFields             map[string]apijson.Field
+}
+
+func (r *Team) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r teamJSON) RawJSON() string {
+	return r.raw
+}
+
+// Infinity manager setting definition
+type TeamInfinityManagerSettings struct {
+	// Enable the infinity manager or not. Used both in org and team level object
+	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
+	// Allow override settings at team level. Only used in org level object
+	InfinityManagerEnableTeamOverride bool                            `json:"infinityManagerEnableTeamOverride"`
+	JSON                              teamInfinityManagerSettingsJSON `json:"-"`
+}
+
+// teamInfinityManagerSettingsJSON contains the JSON metadata for the struct
+// [TeamInfinityManagerSettings]
+type teamInfinityManagerSettingsJSON struct {
+	InfinityManagerEnabled            apijson.Field
+	InfinityManagerEnableTeamOverride apijson.Field
+	raw                               string
+	ExtraFields                       map[string]apijson.Field
+}
+
+func (r *TeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r teamInfinityManagerSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
+// Repo scan setting definition
+type TeamRepoScanSettings struct {
+	// Allow org admin to override the org level repo scan settings
+	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
+	// Allow repository scanning by default
+	RepoScanByDefault bool `json:"repoScanByDefault"`
+	// Enable the repository scan or not. Only used in org level object
+	RepoScanEnabled bool `json:"repoScanEnabled"`
+	// Sends notification to end user after scanning is done
+	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
+	// Allow override settings at team level. Only used in org level object
+	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
+	// Allow showing scan results to CLI or UI
+	RepoScanShowResults bool                     `json:"repoScanShowResults"`
+	JSON                teamRepoScanSettingsJSON `json:"-"`
+}
+
+// teamRepoScanSettingsJSON contains the JSON metadata for the struct
+// [TeamRepoScanSettings]
+type teamRepoScanSettingsJSON struct {
+	RepoScanAllowOverride       apijson.Field
+	RepoScanByDefault           apijson.Field
+	RepoScanEnabled             apijson.Field
+	RepoScanEnableNotifications apijson.Field
+	RepoScanEnableTeamOverride  apijson.Field
+	RepoScanShowResults         apijson.Field
+	raw                         string
+	ExtraFields                 map[string]apijson.Field
+}
+
+func (r *TeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r teamRepoScanSettingsJSON) RawJSON() string {
+	return r.raw
+}
+
 // listing of all teams
 type TeamList struct {
 	// object that describes the pagination information
 	PaginationInfo TeamListPaginationInfo `json:"paginationInfo"`
 	RequestStatus  TeamListRequestStatus  `json:"requestStatus"`
-	Teams          []TeamListTeam         `json:"teams"`
+	Teams          []Team                 `json:"teams"`
 	JSON           teamListJSON           `json:"-"`
 }
 
@@ -480,107 +581,6 @@ func (r TeamListRequestStatusStatusCode) IsKnown() bool {
 		return true
 	}
 	return false
-}
-
-// Information about the team
-type TeamListTeam struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings TeamListTeamsInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings TeamListTeamsRepoScanSettings `json:"repoScanSettings"`
-	JSON             teamListTeamJSON              `json:"-"`
-}
-
-// teamListTeamJSON contains the JSON metadata for the struct [TeamListTeam]
-type teamListTeamJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *TeamListTeam) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r teamListTeamJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type TeamListTeamsInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                     `json:"infinityManagerEnableTeamOverride"`
-	JSON                              teamListTeamsInfinityManagerSettingsJSON `json:"-"`
-}
-
-// teamListTeamsInfinityManagerSettingsJSON contains the JSON metadata for the
-// struct [TeamListTeamsInfinityManagerSettings]
-type teamListTeamsInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *TeamListTeamsInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r teamListTeamsInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type TeamListTeamsRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                              `json:"repoScanShowResults"`
-	JSON                teamListTeamsRepoScanSettingsJSON `json:"-"`
-}
-
-// teamListTeamsRepoScanSettingsJSON contains the JSON metadata for the struct
-// [TeamListTeamsRepoScanSettings]
-type teamListTeamsRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *TeamListTeamsRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r teamListTeamsRepoScanSettingsJSON) RawJSON() string {
-	return r.raw
 }
 
 // about one user
@@ -857,7 +857,7 @@ type UserUserRole struct {
 	// Information about the user who is attempting to run the job
 	TargetSystemUserIdentifier UserUserRolesTargetSystemUserIdentifier `json:"targetSystemUserIdentifier"`
 	// Information about the team
-	Team UserUserRolesTeam `json:"team"`
+	Team Team `json:"team"`
 	// List of team role types that the user have
 	TeamRoles []string         `json:"teamRoles"`
 	JSON      userUserRoleJSON `json:"-"`
@@ -1337,108 +1337,6 @@ func (r userUserRolesTargetSystemUserIdentifierJSON) RawJSON() string {
 	return r.raw
 }
 
-// Information about the team
-type UserUserRolesTeam struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings UserUserRolesTeamInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings UserUserRolesTeamRepoScanSettings `json:"repoScanSettings"`
-	JSON             userUserRolesTeamJSON             `json:"-"`
-}
-
-// userUserRolesTeamJSON contains the JSON metadata for the struct
-// [UserUserRolesTeam]
-type userUserRolesTeamJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *UserUserRolesTeam) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userUserRolesTeamJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type UserUserRolesTeamInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                         `json:"infinityManagerEnableTeamOverride"`
-	JSON                              userUserRolesTeamInfinityManagerSettingsJSON `json:"-"`
-}
-
-// userUserRolesTeamInfinityManagerSettingsJSON contains the JSON metadata for the
-// struct [UserUserRolesTeamInfinityManagerSettings]
-type userUserRolesTeamInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *UserUserRolesTeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userUserRolesTeamInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type UserUserRolesTeamRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                  `json:"repoScanShowResults"`
-	JSON                userUserRolesTeamRepoScanSettingsJSON `json:"-"`
-}
-
-// userUserRolesTeamRepoScanSettingsJSON contains the JSON metadata for the struct
-// [UserUserRolesTeamRepoScanSettings]
-type userUserRolesTeamRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *UserUserRolesTeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userUserRolesTeamRepoScanSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
 // represents user storage quota for a given ace and available unused storage
 type UserUserStorageQuota struct {
 	// id of the ace
@@ -1543,199 +1441,6 @@ func (r *UserUserUserMetadata) UnmarshalJSON(data []byte) (err error) {
 
 func (r userUserUserMetadataJSON) RawJSON() string {
 	return r.raw
-}
-
-// Response for a list of user invitations.
-type UserInvitationList struct {
-	// List of invitations.
-	Invitations []UserInvitationListInvitation `json:"invitations"`
-	// object that describes the pagination information
-	PaginationInfo UserInvitationListPaginationInfo `json:"paginationInfo"`
-	RequestStatus  UserInvitationListRequestStatus  `json:"requestStatus"`
-	JSON           userInvitationListJSON           `json:"-"`
-}
-
-// userInvitationListJSON contains the JSON metadata for the struct
-// [UserInvitationList]
-type userInvitationListJSON struct {
-	Invitations    apijson.Field
-	PaginationInfo apijson.Field
-	RequestStatus  apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *UserInvitationList) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userInvitationListJSON) RawJSON() string {
-	return r.raw
-}
-
-// User invitation to an NGC org or team
-type UserInvitationListInvitation struct {
-	// Unique invitation ID
-	ID string `json:"id"`
-	// Date on which the invitation was created. (ISO-8601 format)
-	CreatedDate string `json:"createdDate"`
-	// Email address of the user.
-	Email string `json:"email"`
-	// Flag indicating if the invitation has already been accepted by the user.
-	IsProcessed bool `json:"isProcessed"`
-	// user name
-	Name string `json:"name"`
-	// Org to which a user was invited.
-	Org string `json:"org"`
-	// List of roles that the user have.
-	Roles []string `json:"roles"`
-	// Team to which a user was invited.
-	Team string `json:"team"`
-	// Type of invitation. The invitation is either to an organization or to a team
-	// within organization.
-	Type UserInvitationListInvitationsType `json:"type"`
-	JSON userInvitationListInvitationJSON  `json:"-"`
-}
-
-// userInvitationListInvitationJSON contains the JSON metadata for the struct
-// [UserInvitationListInvitation]
-type userInvitationListInvitationJSON struct {
-	ID          apijson.Field
-	CreatedDate apijson.Field
-	Email       apijson.Field
-	IsProcessed apijson.Field
-	Name        apijson.Field
-	Org         apijson.Field
-	Roles       apijson.Field
-	Team        apijson.Field
-	Type        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *UserInvitationListInvitation) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userInvitationListInvitationJSON) RawJSON() string {
-	return r.raw
-}
-
-// Type of invitation. The invitation is either to an organization or to a team
-// within organization.
-type UserInvitationListInvitationsType string
-
-const (
-	UserInvitationListInvitationsTypeOrganization UserInvitationListInvitationsType = "ORGANIZATION"
-	UserInvitationListInvitationsTypeTeam         UserInvitationListInvitationsType = "TEAM"
-)
-
-func (r UserInvitationListInvitationsType) IsKnown() bool {
-	switch r {
-	case UserInvitationListInvitationsTypeOrganization, UserInvitationListInvitationsTypeTeam:
-		return true
-	}
-	return false
-}
-
-// object that describes the pagination information
-type UserInvitationListPaginationInfo struct {
-	// Page index of results
-	Index int64 `json:"index"`
-	// Serialized pointer to the next results page. Should be used for fetching next
-	// page. Can be empty
-	NextPage string `json:"nextPage"`
-	// Number of results in page
-	Size int64 `json:"size"`
-	// Total number of pages available
-	TotalPages int64 `json:"totalPages"`
-	// Total number of results available
-	TotalResults int64                                `json:"totalResults"`
-	JSON         userInvitationListPaginationInfoJSON `json:"-"`
-}
-
-// userInvitationListPaginationInfoJSON contains the JSON metadata for the struct
-// [UserInvitationListPaginationInfo]
-type userInvitationListPaginationInfoJSON struct {
-	Index        apijson.Field
-	NextPage     apijson.Field
-	Size         apijson.Field
-	TotalPages   apijson.Field
-	TotalResults apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
-}
-
-func (r *UserInvitationListPaginationInfo) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userInvitationListPaginationInfoJSON) RawJSON() string {
-	return r.raw
-}
-
-type UserInvitationListRequestStatus struct {
-	RequestID string `json:"requestId"`
-	ServerID  string `json:"serverId"`
-	// Describes response status reported by the server.
-	StatusCode        UserInvitationListRequestStatusStatusCode `json:"statusCode"`
-	StatusDescription string                                    `json:"statusDescription"`
-	JSON              userInvitationListRequestStatusJSON       `json:"-"`
-}
-
-// userInvitationListRequestStatusJSON contains the JSON metadata for the struct
-// [UserInvitationListRequestStatus]
-type userInvitationListRequestStatusJSON struct {
-	RequestID         apijson.Field
-	ServerID          apijson.Field
-	StatusCode        apijson.Field
-	StatusDescription apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *UserInvitationListRequestStatus) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userInvitationListRequestStatusJSON) RawJSON() string {
-	return r.raw
-}
-
-// Describes response status reported by the server.
-type UserInvitationListRequestStatusStatusCode string
-
-const (
-	UserInvitationListRequestStatusStatusCodeUnknown                    UserInvitationListRequestStatusStatusCode = "UNKNOWN"
-	UserInvitationListRequestStatusStatusCodeSuccess                    UserInvitationListRequestStatusStatusCode = "SUCCESS"
-	UserInvitationListRequestStatusStatusCodeUnauthorized               UserInvitationListRequestStatusStatusCode = "UNAUTHORIZED"
-	UserInvitationListRequestStatusStatusCodePaymentRequired            UserInvitationListRequestStatusStatusCode = "PAYMENT_REQUIRED"
-	UserInvitationListRequestStatusStatusCodeForbidden                  UserInvitationListRequestStatusStatusCode = "FORBIDDEN"
-	UserInvitationListRequestStatusStatusCodeTimeout                    UserInvitationListRequestStatusStatusCode = "TIMEOUT"
-	UserInvitationListRequestStatusStatusCodeExists                     UserInvitationListRequestStatusStatusCode = "EXISTS"
-	UserInvitationListRequestStatusStatusCodeNotFound                   UserInvitationListRequestStatusStatusCode = "NOT_FOUND"
-	UserInvitationListRequestStatusStatusCodeInternalError              UserInvitationListRequestStatusStatusCode = "INTERNAL_ERROR"
-	UserInvitationListRequestStatusStatusCodeInvalidRequest             UserInvitationListRequestStatusStatusCode = "INVALID_REQUEST"
-	UserInvitationListRequestStatusStatusCodeInvalidRequestVersion      UserInvitationListRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
-	UserInvitationListRequestStatusStatusCodeInvalidRequestData         UserInvitationListRequestStatusStatusCode = "INVALID_REQUEST_DATA"
-	UserInvitationListRequestStatusStatusCodeMethodNotAllowed           UserInvitationListRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
-	UserInvitationListRequestStatusStatusCodeConflict                   UserInvitationListRequestStatusStatusCode = "CONFLICT"
-	UserInvitationListRequestStatusStatusCodeUnprocessableEntity        UserInvitationListRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
-	UserInvitationListRequestStatusStatusCodeTooManyRequests            UserInvitationListRequestStatusStatusCode = "TOO_MANY_REQUESTS"
-	UserInvitationListRequestStatusStatusCodeInsufficientStorage        UserInvitationListRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
-	UserInvitationListRequestStatusStatusCodeServiceUnavailable         UserInvitationListRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
-	UserInvitationListRequestStatusStatusCodePayloadTooLarge            UserInvitationListRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
-	UserInvitationListRequestStatusStatusCodeNotAcceptable              UserInvitationListRequestStatusStatusCode = "NOT_ACCEPTABLE"
-	UserInvitationListRequestStatusStatusCodeUnavailableForLegalReasons UserInvitationListRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
-	UserInvitationListRequestStatusStatusCodeBadGateway                 UserInvitationListRequestStatusStatusCode = "BAD_GATEWAY"
-)
-
-func (r UserInvitationListRequestStatusStatusCode) IsKnown() bool {
-	switch r {
-	case UserInvitationListRequestStatusStatusCodeUnknown, UserInvitationListRequestStatusStatusCodeSuccess, UserInvitationListRequestStatusStatusCodeUnauthorized, UserInvitationListRequestStatusStatusCodePaymentRequired, UserInvitationListRequestStatusStatusCodeForbidden, UserInvitationListRequestStatusStatusCodeTimeout, UserInvitationListRequestStatusStatusCodeExists, UserInvitationListRequestStatusStatusCodeNotFound, UserInvitationListRequestStatusStatusCodeInternalError, UserInvitationListRequestStatusStatusCodeInvalidRequest, UserInvitationListRequestStatusStatusCodeInvalidRequestVersion, UserInvitationListRequestStatusStatusCodeInvalidRequestData, UserInvitationListRequestStatusStatusCodeMethodNotAllowed, UserInvitationListRequestStatusStatusCodeConflict, UserInvitationListRequestStatusStatusCodeUnprocessableEntity, UserInvitationListRequestStatusStatusCodeTooManyRequests, UserInvitationListRequestStatusStatusCodeInsufficientStorage, UserInvitationListRequestStatusStatusCodeServiceUnavailable, UserInvitationListRequestStatusStatusCodePayloadTooLarge, UserInvitationListRequestStatusStatusCodeNotAcceptable, UserInvitationListRequestStatusStatusCodeUnavailableForLegalReasons, UserInvitationListRequestStatusStatusCodeBadGateway:
-		return true
-	}
-	return false
 }
 
 // Response for List User reponse
@@ -2023,7 +1728,7 @@ type UserListUsersRole struct {
 	// Information about the user who is attempting to run the job
 	TargetSystemUserIdentifier UserListUsersRolesTargetSystemUserIdentifier `json:"targetSystemUserIdentifier"`
 	// Information about the team
-	Team UserListUsersRolesTeam `json:"team"`
+	Team Team `json:"team"`
 	// List of team role types that the user have
 	TeamRoles []string              `json:"teamRoles"`
 	JSON      userListUsersRoleJSON `json:"-"`
@@ -2501,108 +2206,6 @@ func (r *UserListUsersRolesTargetSystemUserIdentifier) UnmarshalJSON(data []byte
 }
 
 func (r userListUsersRolesTargetSystemUserIdentifierJSON) RawJSON() string {
-	return r.raw
-}
-
-// Information about the team
-type UserListUsersRolesTeam struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings UserListUsersRolesTeamInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings UserListUsersRolesTeamRepoScanSettings `json:"repoScanSettings"`
-	JSON             userListUsersRolesTeamJSON             `json:"-"`
-}
-
-// userListUsersRolesTeamJSON contains the JSON metadata for the struct
-// [UserListUsersRolesTeam]
-type userListUsersRolesTeamJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *UserListUsersRolesTeam) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userListUsersRolesTeamJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type UserListUsersRolesTeamInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                              `json:"infinityManagerEnableTeamOverride"`
-	JSON                              userListUsersRolesTeamInfinityManagerSettingsJSON `json:"-"`
-}
-
-// userListUsersRolesTeamInfinityManagerSettingsJSON contains the JSON metadata for
-// the struct [UserListUsersRolesTeamInfinityManagerSettings]
-type userListUsersRolesTeamInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *UserListUsersRolesTeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userListUsersRolesTeamInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type UserListUsersRolesTeamRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                       `json:"repoScanShowResults"`
-	JSON                userListUsersRolesTeamRepoScanSettingsJSON `json:"-"`
-}
-
-// userListUsersRolesTeamRepoScanSettingsJSON contains the JSON metadata for the
-// struct [UserListUsersRolesTeamRepoScanSettings]
-type userListUsersRolesTeamRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *UserListUsersRolesTeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userListUsersRolesTeamRepoScanSettingsJSON) RawJSON() string {
 	return r.raw
 }
 

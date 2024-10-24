@@ -4,12 +4,13 @@ package ngc
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
 	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
-	"github.com/NVIDIADemo/ngc-go/internal/pagination"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
@@ -22,11 +23,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAdminOrgService] method instead.
 type AdminOrgService struct {
-	Options    []option.RequestOption
-	NcaIDs     *AdminOrgNcaIDService
-	Offboarded *AdminOrgOffboardedService
-	Teams      *AdminOrgTeamService
-	Users      *AdminOrgUserService
+	Options []option.RequestOption
+	Users   *AdminOrgUserService
+	Teams   *AdminOrgTeamService
 }
 
 // NewAdminOrgService generates a new service that applies the given options to
@@ -35,482 +34,303 @@ type AdminOrgService struct {
 func NewAdminOrgService(opts ...option.RequestOption) (r *AdminOrgService) {
 	r = &AdminOrgService{}
 	r.Options = opts
-	r.NcaIDs = NewAdminOrgNcaIDService(opts...)
-	r.Offboarded = NewAdminOrgOffboardedService(opts...)
-	r.Teams = NewAdminOrgTeamService(opts...)
 	r.Users = NewAdminOrgUserService(opts...)
+	r.Teams = NewAdminOrgTeamService(opts...)
 	return
 }
 
-// OrgCreateRequest is used to create the organization or when no nca_id is
-// provided upfront, the OrgCreateRequest is stored as proto org, and proto org
-// flow initiates (SuperAdmin privileges required)
-func (r *AdminOrgService) New(ctx context.Context, params AdminOrgNewParams, opts ...option.RequestOption) (res *http.Response, err error) {
+// Create a new organization. (SuperAdmin privileges required)
+func (r *AdminOrgService) New(ctx context.Context, body AdminOrgNewParams, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	path := "v3/admin/orgs"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	path := "v2/admin/orgs"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
-// List all organizations. (SuperAdmin privileges required)
-func (r *AdminOrgService) List(ctx context.Context, query AdminOrgListParams, opts ...option.RequestOption) (res *pagination.PageNumberOrganizations[AdminOrgListResponse], err error) {
-	var raw *http.Response
+// Get organization or proto organization info. (SuperAdmin privileges required)
+func (r *AdminOrgService) Get(ctx context.Context, orgName string, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "v2/admin/org"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
 	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
+	path := fmt.Sprintf("v3/admin/org/%s", orgName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
+// Update org information and settings. Superadmin privileges required
+func (r *AdminOrgService) Update(ctx context.Context, orgName string, body AdminOrgUpdateParams, opts ...option.RequestOption) (res *http.Response, err error) {
+	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
 	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
+	path := fmt.Sprintf("v3/admin/org/%s", orgName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
 }
 
-// List all organizations. (SuperAdmin privileges required)
-func (r *AdminOrgService) ListAutoPaging(ctx context.Context, query AdminOrgListParams, opts ...option.RequestOption) *pagination.PageNumberOrganizationsAutoPager[AdminOrgListResponse] {
-	return pagination.NewPageNumberOrganizationsAutoPager(r.List(ctx, query, opts...))
+// Backfill Orgs to Kratos
+func (r *AdminOrgService) BackfillOrgsToKratos(ctx context.Context, opts ...option.RequestOption) (res *http.Response, err error) {
+	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	path := "v2/admin/backfill-orgs-to-kratos"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
 }
 
-// Information about the Organization
-type AdminOrgListResponse struct {
-	// Unique Id of this team.
-	ID int64 `json:"id"`
-	// Org Owner Alternate Contact
-	AlternateContact AdminOrgListResponseAlternateContact `json:"alternateContact"`
-	// Billing account ID.
-	BillingAccountID string `json:"billingAccountId"`
-	// Identifies if the org can be reused.
-	CanAddOn bool `json:"canAddOn"`
-	// ISO country code of the organization.
-	Country string `json:"country"`
-	// Optional description of the organization.
-	Description string `json:"description"`
-	// Name of the organization that will be shown to users.
-	DisplayName string `json:"displayName"`
-	// Identity Provider ID.
-	IdpID string `json:"idpId"`
-	// Industry of the organization.
-	Industry string `json:"industry"`
-	// Infinity manager setting definition
-	InfinityManagerSettings AdminOrgListResponseInfinityManagerSettings `json:"infinityManagerSettings"`
-	// Dataset Service enable flag for an organization
-	IsDatasetServiceEnabled bool `json:"isDatasetServiceEnabled"`
-	// Is NVIDIA internal org or not
-	IsInternal bool `json:"isInternal"`
-	// Indicates when the org is a proto org
-	IsProto bool `json:"isProto"`
-	// Quick Start enable flag for an organization
-	IsQuickStartEnabled bool `json:"isQuickStartEnabled"`
-	// If a server side encryption is enabled for private registry (models, resources)
-	IsRegistrySseEnabled bool `json:"isRegistrySSEEnabled"`
-	// Secrets Manager Service enable flag for an organization
-	IsSecretsManagerServiceEnabled bool `json:"isSecretsManagerServiceEnabled"`
-	// Secure Credential Sharing Service enable flag for an organization
-	IsSecureCredentialSharingServiceEnabled bool `json:"isSecureCredentialSharingServiceEnabled"`
-	// If a separate influx db used for an organization in BCP for job telemetry
-	IsSeparateInfluxDBUsed bool `json:"isSeparateInfluxDbUsed"`
-	// Organization name.
-	Name string `json:"name"`
-	// NVIDIA Cloud Account Number.
-	Nan string `json:"nan"`
-	// Org owner.
-	OrgOwner AdminOrgListResponseOrgOwner `json:"orgOwner"`
-	// Org owners
-	OrgOwners []AdminOrgListResponseOrgOwner `json:"orgOwners"`
-	// Product end customer salesforce.com Id (external customer Id). pecSfdcId is for
-	// EMS (entitlement management service) to track external paid customer.
-	PecSfdcID            string                                    `json:"pecSfdcId"`
-	ProductEnablements   []AdminOrgListResponseProductEnablement   `json:"productEnablements"`
-	ProductSubscriptions []AdminOrgListResponseProductSubscription `json:"productSubscriptions"`
-	// Repo scan setting definition
-	RepoScanSettings AdminOrgListResponseRepoScanSettings `json:"repoScanSettings"`
-	Type             AdminOrgListResponseType             `json:"type"`
-	// Users information.
-	UsersInfo AdminOrgListResponseUsersInfo `json:"usersInfo"`
-	JSON      adminOrgListResponseJSON      `json:"-"`
+// Create org product enablement
+func (r *AdminOrgService) Enable(ctx context.Context, orgName string, body AdminOrgEnableParams, opts ...option.RequestOption) (res *http.Response, err error) {
+	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/admin/org/%s/enablement", orgName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
 }
 
-// adminOrgListResponseJSON contains the JSON metadata for the struct
-// [AdminOrgListResponse]
-type adminOrgListResponseJSON struct {
-	ID                                      apijson.Field
-	AlternateContact                        apijson.Field
-	BillingAccountID                        apijson.Field
-	CanAddOn                                apijson.Field
-	Country                                 apijson.Field
-	Description                             apijson.Field
-	DisplayName                             apijson.Field
-	IdpID                                   apijson.Field
-	Industry                                apijson.Field
-	InfinityManagerSettings                 apijson.Field
-	IsDatasetServiceEnabled                 apijson.Field
-	IsInternal                              apijson.Field
-	IsProto                                 apijson.Field
-	IsQuickStartEnabled                     apijson.Field
-	IsRegistrySseEnabled                    apijson.Field
-	IsSecretsManagerServiceEnabled          apijson.Field
-	IsSecureCredentialSharingServiceEnabled apijson.Field
-	IsSeparateInfluxDBUsed                  apijson.Field
-	Name                                    apijson.Field
-	Nan                                     apijson.Field
-	OrgOwner                                apijson.Field
-	OrgOwners                               apijson.Field
-	PecSfdcID                               apijson.Field
-	ProductEnablements                      apijson.Field
-	ProductSubscriptions                    apijson.Field
-	RepoScanSettings                        apijson.Field
-	Type                                    apijson.Field
-	UsersInfo                               apijson.Field
-	raw                                     string
-	ExtraFields                             map[string]apijson.Field
+// Backfill the org owner for users
+func (r *AdminOrgService) OrgOwnerBackfill(ctx context.Context, orgName string, opts ...option.RequestOption) (res *AdminOrgOrgOwnerBackfillResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	if orgName == "" {
+		err = errors.New("missing required org-name parameter")
+		return
+	}
+	path := fmt.Sprintf("v2/admin/org/%s/org-owner-backfill", orgName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
 }
 
-func (r *AdminOrgListResponse) UnmarshalJSON(data []byte) (err error) {
+// Validate org creation from proto org
+func (r *AdminOrgService) Validate(ctx context.Context, query AdminOrgValidateParams, opts ...option.RequestOption) (res *AdminOrgValidateResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "v3/orgs/proto-org/validate"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
+type AdminOrgOrgOwnerBackfillResponse struct {
+	RequestStatus AdminOrgOrgOwnerBackfillResponseRequestStatus `json:"requestStatus"`
+	JSON          adminOrgOrgOwnerBackfillResponseJSON          `json:"-"`
+}
+
+// adminOrgOrgOwnerBackfillResponseJSON contains the JSON metadata for the struct
+// [AdminOrgOrgOwnerBackfillResponse]
+type adminOrgOrgOwnerBackfillResponseJSON struct {
+	RequestStatus apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *AdminOrgOrgOwnerBackfillResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r adminOrgListResponseJSON) RawJSON() string {
+func (r adminOrgOrgOwnerBackfillResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// Org Owner Alternate Contact
-type AdminOrgListResponseAlternateContact struct {
-	// Alternate contact's email.
+type AdminOrgOrgOwnerBackfillResponseRequestStatus struct {
+	RequestID string `json:"requestId"`
+	ServerID  string `json:"serverId"`
+	// Describes response status reported by the server.
+	StatusCode        AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode `json:"statusCode"`
+	StatusDescription string                                                  `json:"statusDescription"`
+	JSON              adminOrgOrgOwnerBackfillResponseRequestStatusJSON       `json:"-"`
+}
+
+// adminOrgOrgOwnerBackfillResponseRequestStatusJSON contains the JSON metadata for
+// the struct [AdminOrgOrgOwnerBackfillResponseRequestStatus]
+type adminOrgOrgOwnerBackfillResponseRequestStatusJSON struct {
+	RequestID         apijson.Field
+	ServerID          apijson.Field
+	StatusCode        apijson.Field
+	StatusDescription apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AdminOrgOrgOwnerBackfillResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r adminOrgOrgOwnerBackfillResponseRequestStatusJSON) RawJSON() string {
+	return r.raw
+}
+
+// Describes response status reported by the server.
+type AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode string
+
+const (
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnknown                    AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "UNKNOWN"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeSuccess                    AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "SUCCESS"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnauthorized               AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "UNAUTHORIZED"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePaymentRequired            AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeForbidden                  AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "FORBIDDEN"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTimeout                    AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "TIMEOUT"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeExists                     AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "EXISTS"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotFound                   AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "NOT_FOUND"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInternalError              AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "INTERNAL_ERROR"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequest             AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestVersion      AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestData         AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeMethodNotAllowed           AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeConflict                   AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "CONFLICT"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnprocessableEntity        AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTooManyRequests            AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInsufficientStorage        AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeServiceUnavailable         AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePayloadTooLarge            AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotAcceptable              AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnavailableForLegalReasons AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
+	AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeBadGateway                 AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode = "BAD_GATEWAY"
+)
+
+func (r AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCode) IsKnown() bool {
+	switch r {
+	case AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnknown, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeSuccess, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnauthorized, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePaymentRequired, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeForbidden, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTimeout, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeExists, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotFound, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInternalError, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequest, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestVersion, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInvalidRequestData, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeMethodNotAllowed, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeConflict, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnprocessableEntity, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeTooManyRequests, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeInsufficientStorage, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeServiceUnavailable, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodePayloadTooLarge, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeNotAcceptable, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminOrgOrgOwnerBackfillResponseRequestStatusStatusCodeBadGateway:
+		return true
+	}
+	return false
+}
+
+// Invitation Validation Response.
+type AdminOrgValidateResponse struct {
+	// Org invitation to NGC
+	OrgInvitation AdminOrgValidateResponseOrgInvitation `json:"orgInvitation"`
+	RequestStatus AdminOrgValidateResponseRequestStatus `json:"requestStatus"`
+	JSON          adminOrgValidateResponseJSON          `json:"-"`
+}
+
+// adminOrgValidateResponseJSON contains the JSON metadata for the struct
+// [AdminOrgValidateResponse]
+type adminOrgValidateResponseJSON struct {
+	OrgInvitation apijson.Field
+	RequestStatus apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *AdminOrgValidateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r adminOrgValidateResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Org invitation to NGC
+type AdminOrgValidateResponseOrgInvitation struct {
+	// Email address of the user.
 	Email string `json:"email"`
-	// Full name of the alternate contact.
-	FullName string                                   `json:"fullName"`
-	JSON     adminOrgListResponseAlternateContactJSON `json:"-"`
+	// Proto Org identifier.
+	ProtoOrgID string                                    `json:"protoOrgId"`
+	JSON       adminOrgValidateResponseOrgInvitationJSON `json:"-"`
 }
 
-// adminOrgListResponseAlternateContactJSON contains the JSON metadata for the
-// struct [AdminOrgListResponseAlternateContact]
-type adminOrgListResponseAlternateContactJSON struct {
+// adminOrgValidateResponseOrgInvitationJSON contains the JSON metadata for the
+// struct [AdminOrgValidateResponseOrgInvitation]
+type adminOrgValidateResponseOrgInvitationJSON struct {
 	Email       apijson.Field
-	FullName    apijson.Field
+	ProtoOrgID  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *AdminOrgListResponseAlternateContact) UnmarshalJSON(data []byte) (err error) {
+func (r *AdminOrgValidateResponseOrgInvitation) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r adminOrgListResponseAlternateContactJSON) RawJSON() string {
+func (r adminOrgValidateResponseOrgInvitationJSON) RawJSON() string {
 	return r.raw
 }
 
-// Infinity manager setting definition
-type AdminOrgListResponseInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                            `json:"infinityManagerEnableTeamOverride"`
-	JSON                              adminOrgListResponseInfinityManagerSettingsJSON `json:"-"`
+type AdminOrgValidateResponseRequestStatus struct {
+	RequestID string `json:"requestId"`
+	ServerID  string `json:"serverId"`
+	// Describes response status reported by the server.
+	StatusCode        AdminOrgValidateResponseRequestStatusStatusCode `json:"statusCode"`
+	StatusDescription string                                          `json:"statusDescription"`
+	JSON              adminOrgValidateResponseRequestStatusJSON       `json:"-"`
 }
 
-// adminOrgListResponseInfinityManagerSettingsJSON contains the JSON metadata for
-// the struct [AdminOrgListResponseInfinityManagerSettings]
-type adminOrgListResponseInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
+// adminOrgValidateResponseRequestStatusJSON contains the JSON metadata for the
+// struct [AdminOrgValidateResponseRequestStatus]
+type adminOrgValidateResponseRequestStatusJSON struct {
+	RequestID         apijson.Field
+	ServerID          apijson.Field
+	StatusCode        apijson.Field
+	StatusDescription apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
-func (r *AdminOrgListResponseInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
+func (r *AdminOrgValidateResponseRequestStatus) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r adminOrgListResponseInfinityManagerSettingsJSON) RawJSON() string {
+func (r adminOrgValidateResponseRequestStatusJSON) RawJSON() string {
 	return r.raw
 }
 
-// Org owner.
-type AdminOrgListResponseOrgOwner struct {
-	// Email address of the org owner.
-	Email string `json:"email,required"`
-	// Org owner name.
-	FullName string `json:"fullName,required"`
-	// Last time the org owner logged in.
-	LastLoginDate string                           `json:"lastLoginDate"`
-	JSON          adminOrgListResponseOrgOwnerJSON `json:"-"`
-}
-
-// adminOrgListResponseOrgOwnerJSON contains the JSON metadata for the struct
-// [AdminOrgListResponseOrgOwner]
-type adminOrgListResponseOrgOwnerJSON struct {
-	Email         apijson.Field
-	FullName      apijson.Field
-	LastLoginDate apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseOrgOwner) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseOrgOwnerJSON) RawJSON() string {
-	return r.raw
-}
-
-// Product Enablement
-type AdminOrgListResponseProductEnablement struct {
-	// Product Name (NVAIE, BASE_COMMAND, REGISTRY, etc)
-	ProductName string `json:"productName,required"`
-	// Product Enablement Types
-	Type AdminOrgListResponseProductEnablementsType `json:"type,required"`
-	// Date on which the subscription expires. The subscription is invalid after this
-	// date. (yyyy-MM-dd)
-	ExpirationDate string                                           `json:"expirationDate"`
-	PoDetails      []AdminOrgListResponseProductEnablementsPoDetail `json:"poDetails"`
-	JSON           adminOrgListResponseProductEnablementJSON        `json:"-"`
-}
-
-// adminOrgListResponseProductEnablementJSON contains the JSON metadata for the
-// struct [AdminOrgListResponseProductEnablement]
-type adminOrgListResponseProductEnablementJSON struct {
-	ProductName    apijson.Field
-	Type           apijson.Field
-	ExpirationDate apijson.Field
-	PoDetails      apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseProductEnablement) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseProductEnablementJSON) RawJSON() string {
-	return r.raw
-}
-
-// Product Enablement Types
-type AdminOrgListResponseProductEnablementsType string
+// Describes response status reported by the server.
+type AdminOrgValidateResponseRequestStatusStatusCode string
 
 const (
-	AdminOrgListResponseProductEnablementsTypeNgcAdminEval       AdminOrgListResponseProductEnablementsType = "NGC_ADMIN_EVAL"
-	AdminOrgListResponseProductEnablementsTypeNgcAdminNfr        AdminOrgListResponseProductEnablementsType = "NGC_ADMIN_NFR"
-	AdminOrgListResponseProductEnablementsTypeNgcAdminCommercial AdminOrgListResponseProductEnablementsType = "NGC_ADMIN_COMMERCIAL"
-	AdminOrgListResponseProductEnablementsTypeEmsEval            AdminOrgListResponseProductEnablementsType = "EMS_EVAL"
-	AdminOrgListResponseProductEnablementsTypeEmsNfr             AdminOrgListResponseProductEnablementsType = "EMS_NFR"
-	AdminOrgListResponseProductEnablementsTypeEmsCommercial      AdminOrgListResponseProductEnablementsType = "EMS_COMMERCIAL"
-	AdminOrgListResponseProductEnablementsTypeNgcAdminDeveloper  AdminOrgListResponseProductEnablementsType = "NGC_ADMIN_DEVELOPER"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnknown                    AdminOrgValidateResponseRequestStatusStatusCode = "UNKNOWN"
+	AdminOrgValidateResponseRequestStatusStatusCodeSuccess                    AdminOrgValidateResponseRequestStatusStatusCode = "SUCCESS"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnauthorized               AdminOrgValidateResponseRequestStatusStatusCode = "UNAUTHORIZED"
+	AdminOrgValidateResponseRequestStatusStatusCodePaymentRequired            AdminOrgValidateResponseRequestStatusStatusCode = "PAYMENT_REQUIRED"
+	AdminOrgValidateResponseRequestStatusStatusCodeForbidden                  AdminOrgValidateResponseRequestStatusStatusCode = "FORBIDDEN"
+	AdminOrgValidateResponseRequestStatusStatusCodeTimeout                    AdminOrgValidateResponseRequestStatusStatusCode = "TIMEOUT"
+	AdminOrgValidateResponseRequestStatusStatusCodeExists                     AdminOrgValidateResponseRequestStatusStatusCode = "EXISTS"
+	AdminOrgValidateResponseRequestStatusStatusCodeNotFound                   AdminOrgValidateResponseRequestStatusStatusCode = "NOT_FOUND"
+	AdminOrgValidateResponseRequestStatusStatusCodeInternalError              AdminOrgValidateResponseRequestStatusStatusCode = "INTERNAL_ERROR"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequest             AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestVersion      AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST_VERSION"
+	AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestData         AdminOrgValidateResponseRequestStatusStatusCode = "INVALID_REQUEST_DATA"
+	AdminOrgValidateResponseRequestStatusStatusCodeMethodNotAllowed           AdminOrgValidateResponseRequestStatusStatusCode = "METHOD_NOT_ALLOWED"
+	AdminOrgValidateResponseRequestStatusStatusCodeConflict                   AdminOrgValidateResponseRequestStatusStatusCode = "CONFLICT"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnprocessableEntity        AdminOrgValidateResponseRequestStatusStatusCode = "UNPROCESSABLE_ENTITY"
+	AdminOrgValidateResponseRequestStatusStatusCodeTooManyRequests            AdminOrgValidateResponseRequestStatusStatusCode = "TOO_MANY_REQUESTS"
+	AdminOrgValidateResponseRequestStatusStatusCodeInsufficientStorage        AdminOrgValidateResponseRequestStatusStatusCode = "INSUFFICIENT_STORAGE"
+	AdminOrgValidateResponseRequestStatusStatusCodeServiceUnavailable         AdminOrgValidateResponseRequestStatusStatusCode = "SERVICE_UNAVAILABLE"
+	AdminOrgValidateResponseRequestStatusStatusCodePayloadTooLarge            AdminOrgValidateResponseRequestStatusStatusCode = "PAYLOAD_TOO_LARGE"
+	AdminOrgValidateResponseRequestStatusStatusCodeNotAcceptable              AdminOrgValidateResponseRequestStatusStatusCode = "NOT_ACCEPTABLE"
+	AdminOrgValidateResponseRequestStatusStatusCodeUnavailableForLegalReasons AdminOrgValidateResponseRequestStatusStatusCode = "UNAVAILABLE_FOR_LEGAL_REASONS"
+	AdminOrgValidateResponseRequestStatusStatusCodeBadGateway                 AdminOrgValidateResponseRequestStatusStatusCode = "BAD_GATEWAY"
 )
 
-func (r AdminOrgListResponseProductEnablementsType) IsKnown() bool {
+func (r AdminOrgValidateResponseRequestStatusStatusCode) IsKnown() bool {
 	switch r {
-	case AdminOrgListResponseProductEnablementsTypeNgcAdminEval, AdminOrgListResponseProductEnablementsTypeNgcAdminNfr, AdminOrgListResponseProductEnablementsTypeNgcAdminCommercial, AdminOrgListResponseProductEnablementsTypeEmsEval, AdminOrgListResponseProductEnablementsTypeEmsNfr, AdminOrgListResponseProductEnablementsTypeEmsCommercial, AdminOrgListResponseProductEnablementsTypeNgcAdminDeveloper:
+	case AdminOrgValidateResponseRequestStatusStatusCodeUnknown, AdminOrgValidateResponseRequestStatusStatusCodeSuccess, AdminOrgValidateResponseRequestStatusStatusCodeUnauthorized, AdminOrgValidateResponseRequestStatusStatusCodePaymentRequired, AdminOrgValidateResponseRequestStatusStatusCodeForbidden, AdminOrgValidateResponseRequestStatusStatusCodeTimeout, AdminOrgValidateResponseRequestStatusStatusCodeExists, AdminOrgValidateResponseRequestStatusStatusCodeNotFound, AdminOrgValidateResponseRequestStatusStatusCodeInternalError, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequest, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestVersion, AdminOrgValidateResponseRequestStatusStatusCodeInvalidRequestData, AdminOrgValidateResponseRequestStatusStatusCodeMethodNotAllowed, AdminOrgValidateResponseRequestStatusStatusCodeConflict, AdminOrgValidateResponseRequestStatusStatusCodeUnprocessableEntity, AdminOrgValidateResponseRequestStatusStatusCodeTooManyRequests, AdminOrgValidateResponseRequestStatusStatusCodeInsufficientStorage, AdminOrgValidateResponseRequestStatusStatusCodeServiceUnavailable, AdminOrgValidateResponseRequestStatusStatusCodePayloadTooLarge, AdminOrgValidateResponseRequestStatusStatusCodeNotAcceptable, AdminOrgValidateResponseRequestStatusStatusCodeUnavailableForLegalReasons, AdminOrgValidateResponseRequestStatusStatusCodeBadGateway:
 		return true
 	}
 	return false
-}
-
-// Purchase Order.
-type AdminOrgListResponseProductEnablementsPoDetail struct {
-	// Entitlement identifier.
-	EntitlementID string `json:"entitlementId"`
-	// PAK (Product Activation Key) identifier.
-	PkID string                                             `json:"pkId"`
-	JSON adminOrgListResponseProductEnablementsPoDetailJSON `json:"-"`
-}
-
-// adminOrgListResponseProductEnablementsPoDetailJSON contains the JSON metadata
-// for the struct [AdminOrgListResponseProductEnablementsPoDetail]
-type adminOrgListResponseProductEnablementsPoDetailJSON struct {
-	EntitlementID apijson.Field
-	PkID          apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseProductEnablementsPoDetail) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseProductEnablementsPoDetailJSON) RawJSON() string {
-	return r.raw
-}
-
-// Product Subscription
-type AdminOrgListResponseProductSubscription struct {
-	// Product Name (NVAIE, BASE_COMMAND, FleetCommand, REGISTRY, etc).
-	ProductName string `json:"productName,required"`
-	// Unique entitlement identifier
-	ID string `json:"id"`
-	// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
-	EmsEntitlementType AdminOrgListResponseProductSubscriptionsEmsEntitlementType `json:"emsEntitlementType"`
-	// Date on which the subscription expires. The subscription is invalid after this
-	// date. (yyyy-MM-dd)
-	ExpirationDate string `json:"expirationDate"`
-	// Date on which the subscription becomes active. (yyyy-MM-dd)
-	StartDate string `json:"startDate"`
-	// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
-	// NGC_ADMIN_COMMERCIAL)
-	Type AdminOrgListResponseProductSubscriptionsType `json:"type"`
-	JSON adminOrgListResponseProductSubscriptionJSON  `json:"-"`
-}
-
-// adminOrgListResponseProductSubscriptionJSON contains the JSON metadata for the
-// struct [AdminOrgListResponseProductSubscription]
-type adminOrgListResponseProductSubscriptionJSON struct {
-	ProductName        apijson.Field
-	ID                 apijson.Field
-	EmsEntitlementType apijson.Field
-	ExpirationDate     apijson.Field
-	StartDate          apijson.Field
-	Type               apijson.Field
-	raw                string
-	ExtraFields        map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseProductSubscription) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseProductSubscriptionJSON) RawJSON() string {
-	return r.raw
-}
-
-// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
-type AdminOrgListResponseProductSubscriptionsEmsEntitlementType string
-
-const (
-	AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsEval       AdminOrgListResponseProductSubscriptionsEmsEntitlementType = "EMS_EVAL"
-	AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsNfr        AdminOrgListResponseProductSubscriptionsEmsEntitlementType = "EMS_NFR"
-	AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsCommerical AdminOrgListResponseProductSubscriptionsEmsEntitlementType = "EMS_COMMERICAL"
-	AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsCommercial AdminOrgListResponseProductSubscriptionsEmsEntitlementType = "EMS_COMMERCIAL"
-)
-
-func (r AdminOrgListResponseProductSubscriptionsEmsEntitlementType) IsKnown() bool {
-	switch r {
-	case AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsEval, AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsNfr, AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsCommerical, AdminOrgListResponseProductSubscriptionsEmsEntitlementTypeEmsCommercial:
-		return true
-	}
-	return false
-}
-
-// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
-// NGC_ADMIN_COMMERCIAL)
-type AdminOrgListResponseProductSubscriptionsType string
-
-const (
-	AdminOrgListResponseProductSubscriptionsTypeNgcAdminEval       AdminOrgListResponseProductSubscriptionsType = "NGC_ADMIN_EVAL"
-	AdminOrgListResponseProductSubscriptionsTypeNgcAdminNfr        AdminOrgListResponseProductSubscriptionsType = "NGC_ADMIN_NFR"
-	AdminOrgListResponseProductSubscriptionsTypeNgcAdminCommercial AdminOrgListResponseProductSubscriptionsType = "NGC_ADMIN_COMMERCIAL"
-)
-
-func (r AdminOrgListResponseProductSubscriptionsType) IsKnown() bool {
-	switch r {
-	case AdminOrgListResponseProductSubscriptionsTypeNgcAdminEval, AdminOrgListResponseProductSubscriptionsTypeNgcAdminNfr, AdminOrgListResponseProductSubscriptionsTypeNgcAdminCommercial:
-		return true
-	}
-	return false
-}
-
-// Repo scan setting definition
-type AdminOrgListResponseRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                     `json:"repoScanShowResults"`
-	JSON                adminOrgListResponseRepoScanSettingsJSON `json:"-"`
-}
-
-// adminOrgListResponseRepoScanSettingsJSON contains the JSON metadata for the
-// struct [AdminOrgListResponseRepoScanSettings]
-type adminOrgListResponseRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseRepoScanSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-type AdminOrgListResponseType string
-
-const (
-	AdminOrgListResponseTypeUnknown    AdminOrgListResponseType = "UNKNOWN"
-	AdminOrgListResponseTypeCloud      AdminOrgListResponseType = "CLOUD"
-	AdminOrgListResponseTypeEnterprise AdminOrgListResponseType = "ENTERPRISE"
-	AdminOrgListResponseTypeIndividual AdminOrgListResponseType = "INDIVIDUAL"
-)
-
-func (r AdminOrgListResponseType) IsKnown() bool {
-	switch r {
-	case AdminOrgListResponseTypeUnknown, AdminOrgListResponseTypeCloud, AdminOrgListResponseTypeEnterprise, AdminOrgListResponseTypeIndividual:
-		return true
-	}
-	return false
-}
-
-// Users information.
-type AdminOrgListResponseUsersInfo struct {
-	// Total number of users.
-	TotalUsers int64                             `json:"totalUsers"`
-	JSON       adminOrgListResponseUsersInfoJSON `json:"-"`
-}
-
-// adminOrgListResponseUsersInfoJSON contains the JSON metadata for the struct
-// [AdminOrgListResponseUsersInfo]
-type adminOrgListResponseUsersInfoJSON struct {
-	TotalUsers  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AdminOrgListResponseUsersInfo) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r adminOrgListResponseUsersInfoJSON) RawJSON() string {
-	return r.raw
 }
 
 type AdminOrgNewParams struct {
+	// Org owner.
+	OrgOwner param.Field[AdminOrgNewParamsOrgOwner] `json:"orgOwner,required"`
 	// user country
 	Country param.Field[string] `json:"country"`
 	// optional description of the organization
 	Description param.Field[string] `json:"description"`
 	// Name of the organization that will be shown to users.
 	DisplayName param.Field[string] `json:"displayName"`
-	// Identify the initiator of the org request
-	Initiator param.Field[string] `json:"initiator"`
+	// Identity Provider ID.
+	IdpID param.Field[string] `json:"idpId"`
 	// Is NVIDIA internal org or not
 	IsInternal param.Field[bool] `json:"isInternal"`
 	// Organization name
 	Name param.Field[string] `json:"name"`
-	// NVIDIA Cloud Account Identifier
-	NcaID param.Field[string] `json:"ncaId"`
-	// NVIDIA Cloud Account Number
-	NcaNumber param.Field[string] `json:"ncaNumber"`
-	// Org owner.
-	OrgOwner param.Field[AdminOrgNewParamsOrgOwner] `json:"orgOwner"`
 	// product end customer name for enterprise(Fleet Command) product
 	PecName param.Field[string] `json:"pecName"`
 	// product end customer salesforce.com Id (external customer Id) for
@@ -519,15 +339,11 @@ type AdminOrgNewParams struct {
 	ProductEnablements param.Field[[]AdminOrgNewParamsProductEnablement] `json:"productEnablements"`
 	// This should be deprecated, use productEnablements instead
 	ProductSubscriptions param.Field[[]AdminOrgNewParamsProductSubscription] `json:"productSubscriptions"`
-	// Proto org identifier
-	ProtoOrgID param.Field[string] `json:"protoOrgId"`
 	// Company or organization industry
 	SalesforceAccountIndustry param.Field[string] `json:"salesforceAccountIndustry"`
 	// Send email to org owner or not. Default is true
 	SendEmail param.Field[bool]                  `json:"sendEmail"`
 	Type      param.Field[AdminOrgNewParamsType] `json:"type"`
-	Ncid      param.Field[string]                `cookie:"ncid"`
-	VisitorID param.Field[string]                `cookie:"VisitorID"`
 }
 
 func (r AdminOrgNewParams) MarshalJSON() (data []byte, err error) {
@@ -539,11 +355,9 @@ type AdminOrgNewParamsOrgOwner struct {
 	// Email address of the org owner.
 	Email param.Field[string] `json:"email,required"`
 	// Org owner name.
-	FullName param.Field[string] `json:"fullName"`
-	// Identity Provider ID of the org owner.
-	IdpID param.Field[string] `json:"idpId"`
-	// Starfleet ID of the org owner.
-	StarfleetID param.Field[string] `json:"starfleetId"`
+	FullName param.Field[string] `json:"fullName,required"`
+	// Last time the org owner logged in.
+	LastLoginDate param.Field[string] `json:"lastLoginDate"`
 }
 
 func (r AdminOrgNewParamsOrgOwner) MarshalJSON() (data []byte, err error) {
@@ -674,59 +488,305 @@ func (r AdminOrgNewParamsType) IsKnown() bool {
 	return false
 }
 
-type AdminOrgListParams struct {
-	FilterUsingOrgDisplayName param.Field[string]                                     `query:"Filter using org display name"`
-	FilterUsingOrgOwnerEmail  param.Field[AdminOrgListParamsFilterUsingOrgOwnerEmail] `query:"Filter using org owner email"`
-	FilterUsingOrgOwnerName   param.Field[string]                                     `query:"Filter using org owner name"`
-	// Org description to search
-	OrgDesc param.Field[string] `query:"org-desc"`
-	// Org name to search
-	OrgName param.Field[string] `query:"org-name"`
-	// Org Type to search
-	OrgType param.Field[AdminOrgListParamsOrgType] `query:"org-type"`
-	// The page number of result
-	PageNumber param.Field[int64] `query:"page-number"`
-	// The page size of result
-	PageSize param.Field[int64] `query:"page-size"`
-	// PEC ID to search
-	PecID param.Field[string] `query:"pec-id"`
+type AdminOrgUpdateParams struct {
+	// Org Owner Alternate Contact
+	AlternateContact param.Field[AdminOrgUpdateParamsAlternateContact] `json:"alternateContact"`
+	// Name of the company
+	CompanyName param.Field[string] `json:"companyName"`
+	// optional description of the organization
+	Description param.Field[string] `json:"description"`
+	// Name of the organization that will be shown to users.
+	DisplayName param.Field[string] `json:"displayName"`
+	// Identity Provider ID.
+	IdpID param.Field[string] `json:"idpId"`
+	// Infinity manager setting definition
+	InfinityManagerSettings param.Field[AdminOrgUpdateParamsInfinityManagerSettings] `json:"infinityManagerSettings"`
+	// Dataset Service enable flag for an organization
+	IsDatasetServiceEnabled param.Field[bool] `json:"isDatasetServiceEnabled"`
+	// Is NVIDIA internal org or not
+	IsInternal param.Field[bool] `json:"isInternal"`
+	// Quick Start enable flag for an organization
+	IsQuickStartEnabled param.Field[bool] `json:"isQuickStartEnabled"`
+	// If a server side encryption is enabled for private registry (models, resources)
+	IsRegistrySseEnabled param.Field[bool] `json:"isRegistrySSEEnabled"`
+	// Secrets Manager Service enable flag for an organization
+	IsSecretsManagerServiceEnabled param.Field[bool] `json:"isSecretsManagerServiceEnabled"`
+	// Secure Credential Sharing Service enable flag for an organization
+	IsSecureCredentialSharingServiceEnabled param.Field[bool] `json:"isSecureCredentialSharingServiceEnabled"`
+	// If a separate influx db used for an organization in Base Command Platform job
+	// telemetry
+	IsSeparateInfluxDBUsed param.Field[bool] `json:"isSeparateInfluxDbUsed"`
+	// Org owner.
+	OrgOwner param.Field[AdminOrgUpdateParamsOrgOwner] `json:"orgOwner"`
+	// Org owners
+	OrgOwners param.Field[[]AdminOrgUpdateParamsOrgOwner] `json:"orgOwners"`
+	// product end customer name for enterprise(Fleet Command) product
+	PecName param.Field[string] `json:"pecName"`
+	// product end customer salesforce.com Id (external customer Id) for
+	// enterprise(Fleet Command) product
+	PecSfdcID            param.Field[string]                                    `json:"pecSfdcId"`
+	ProductEnablements   param.Field[[]AdminOrgUpdateParamsProductEnablement]   `json:"productEnablements"`
+	ProductSubscriptions param.Field[[]AdminOrgUpdateParamsProductSubscription] `json:"productSubscriptions"`
+	// Repo scan setting definition
+	RepoScanSettings param.Field[AdminOrgUpdateParamsRepoScanSettings] `json:"repoScanSettings"`
+	Type             param.Field[AdminOrgUpdateParamsType]             `json:"type"`
 }
 
-// URLQuery serializes [AdminOrgListParams]'s query parameters as `url.Values`.
-func (r AdminOrgListParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
+func (r AdminOrgUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-type AdminOrgListParamsFilterUsingOrgOwnerEmail struct {
-	EmailShouldBeBase64Encoded param.Field[string] `query:" Email should be base-64-encoded"`
+// Org Owner Alternate Contact
+type AdminOrgUpdateParamsAlternateContact struct {
+	// Alternate contact's email.
+	Email param.Field[string] `json:"email"`
+	// Full name of the alternate contact.
+	FullName param.Field[string] `json:"fullName"`
 }
 
-// URLQuery serializes [AdminOrgListParamsFilterUsingOrgOwnerEmail]'s query
-// parameters as `url.Values`.
-func (r AdminOrgListParamsFilterUsingOrgOwnerEmail) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
+func (r AdminOrgUpdateParamsAlternateContact) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Org Type to search
-type AdminOrgListParamsOrgType string
+// Infinity manager setting definition
+type AdminOrgUpdateParamsInfinityManagerSettings struct {
+	// Enable the infinity manager or not. Used both in org and team level object
+	InfinityManagerEnabled param.Field[bool] `json:"infinityManagerEnabled"`
+	// Allow override settings at team level. Only used in org level object
+	InfinityManagerEnableTeamOverride param.Field[bool] `json:"infinityManagerEnableTeamOverride"`
+}
+
+func (r AdminOrgUpdateParamsInfinityManagerSettings) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Org owner.
+type AdminOrgUpdateParamsOrgOwner struct {
+	// Email address of the org owner.
+	Email param.Field[string] `json:"email,required"`
+	// Org owner name.
+	FullName param.Field[string] `json:"fullName,required"`
+	// Last time the org owner logged in.
+	LastLoginDate param.Field[string] `json:"lastLoginDate"`
+}
+
+func (r AdminOrgUpdateParamsOrgOwner) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Product Enablement
+type AdminOrgUpdateParamsProductEnablement struct {
+	// Product Name (NVAIE, BASE_COMMAND, REGISTRY, etc)
+	ProductName param.Field[string] `json:"productName,required"`
+	// Product Enablement Types
+	Type param.Field[AdminOrgUpdateParamsProductEnablementsType] `json:"type,required"`
+	// Date on which the subscription expires. The subscription is invalid after this
+	// date. (yyyy-MM-dd)
+	ExpirationDate param.Field[string]                                           `json:"expirationDate"`
+	PoDetails      param.Field[[]AdminOrgUpdateParamsProductEnablementsPoDetail] `json:"poDetails"`
+}
+
+func (r AdminOrgUpdateParamsProductEnablement) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Product Enablement Types
+type AdminOrgUpdateParamsProductEnablementsType string
 
 const (
-	AdminOrgListParamsOrgTypeUnknown    AdminOrgListParamsOrgType = "UNKNOWN"
-	AdminOrgListParamsOrgTypeCloud      AdminOrgListParamsOrgType = "CLOUD"
-	AdminOrgListParamsOrgTypeEnterprise AdminOrgListParamsOrgType = "ENTERPRISE"
-	AdminOrgListParamsOrgTypeIndividual AdminOrgListParamsOrgType = "INDIVIDUAL"
+	AdminOrgUpdateParamsProductEnablementsTypeNgcAdminEval       AdminOrgUpdateParamsProductEnablementsType = "NGC_ADMIN_EVAL"
+	AdminOrgUpdateParamsProductEnablementsTypeNgcAdminNfr        AdminOrgUpdateParamsProductEnablementsType = "NGC_ADMIN_NFR"
+	AdminOrgUpdateParamsProductEnablementsTypeNgcAdminCommercial AdminOrgUpdateParamsProductEnablementsType = "NGC_ADMIN_COMMERCIAL"
+	AdminOrgUpdateParamsProductEnablementsTypeEmsEval            AdminOrgUpdateParamsProductEnablementsType = "EMS_EVAL"
+	AdminOrgUpdateParamsProductEnablementsTypeEmsNfr             AdminOrgUpdateParamsProductEnablementsType = "EMS_NFR"
+	AdminOrgUpdateParamsProductEnablementsTypeEmsCommercial      AdminOrgUpdateParamsProductEnablementsType = "EMS_COMMERCIAL"
+	AdminOrgUpdateParamsProductEnablementsTypeNgcAdminDeveloper  AdminOrgUpdateParamsProductEnablementsType = "NGC_ADMIN_DEVELOPER"
 )
 
-func (r AdminOrgListParamsOrgType) IsKnown() bool {
+func (r AdminOrgUpdateParamsProductEnablementsType) IsKnown() bool {
 	switch r {
-	case AdminOrgListParamsOrgTypeUnknown, AdminOrgListParamsOrgTypeCloud, AdminOrgListParamsOrgTypeEnterprise, AdminOrgListParamsOrgTypeIndividual:
+	case AdminOrgUpdateParamsProductEnablementsTypeNgcAdminEval, AdminOrgUpdateParamsProductEnablementsTypeNgcAdminNfr, AdminOrgUpdateParamsProductEnablementsTypeNgcAdminCommercial, AdminOrgUpdateParamsProductEnablementsTypeEmsEval, AdminOrgUpdateParamsProductEnablementsTypeEmsNfr, AdminOrgUpdateParamsProductEnablementsTypeEmsCommercial, AdminOrgUpdateParamsProductEnablementsTypeNgcAdminDeveloper:
 		return true
 	}
 	return false
+}
+
+// Purchase Order.
+type AdminOrgUpdateParamsProductEnablementsPoDetail struct {
+	// Entitlement identifier.
+	EntitlementID param.Field[string] `json:"entitlementId"`
+	// PAK (Product Activation Key) identifier.
+	PkID param.Field[string] `json:"pkId"`
+}
+
+func (r AdminOrgUpdateParamsProductEnablementsPoDetail) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Product Subscription
+type AdminOrgUpdateParamsProductSubscription struct {
+	// Product Name (NVAIE, BASE_COMMAND, FleetCommand, REGISTRY, etc).
+	ProductName param.Field[string] `json:"productName,required"`
+	// Unique entitlement identifier
+	ID param.Field[string] `json:"id"`
+	// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
+	EmsEntitlementType param.Field[AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType] `json:"emsEntitlementType"`
+	// Date on which the subscription expires. The subscription is invalid after this
+	// date. (yyyy-MM-dd)
+	ExpirationDate param.Field[string] `json:"expirationDate"`
+	// Date on which the subscription becomes active. (yyyy-MM-dd)
+	StartDate param.Field[string] `json:"startDate"`
+	// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
+	// NGC_ADMIN_COMMERCIAL)
+	Type param.Field[AdminOrgUpdateParamsProductSubscriptionsType] `json:"type"`
+}
+
+func (r AdminOrgUpdateParamsProductSubscription) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// EMS Subscription type. (options: EMS_EVAL, EMS_NFR and EMS_COMMERCIAL)
+type AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType string
+
+const (
+	AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsEval       AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType = "EMS_EVAL"
+	AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsNfr        AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType = "EMS_NFR"
+	AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsCommerical AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType = "EMS_COMMERICAL"
+	AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsCommercial AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType = "EMS_COMMERCIAL"
+)
+
+func (r AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementType) IsKnown() bool {
+	switch r {
+	case AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsEval, AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsNfr, AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsCommerical, AdminOrgUpdateParamsProductSubscriptionsEmsEntitlementTypeEmsCommercial:
+		return true
+	}
+	return false
+}
+
+// Subscription type. (options: NGC_ADMIN_EVAL, NGC_ADMIN_NFR,
+// NGC_ADMIN_COMMERCIAL)
+type AdminOrgUpdateParamsProductSubscriptionsType string
+
+const (
+	AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminEval       AdminOrgUpdateParamsProductSubscriptionsType = "NGC_ADMIN_EVAL"
+	AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminNfr        AdminOrgUpdateParamsProductSubscriptionsType = "NGC_ADMIN_NFR"
+	AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminCommercial AdminOrgUpdateParamsProductSubscriptionsType = "NGC_ADMIN_COMMERCIAL"
+)
+
+func (r AdminOrgUpdateParamsProductSubscriptionsType) IsKnown() bool {
+	switch r {
+	case AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminEval, AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminNfr, AdminOrgUpdateParamsProductSubscriptionsTypeNgcAdminCommercial:
+		return true
+	}
+	return false
+}
+
+// Repo scan setting definition
+type AdminOrgUpdateParamsRepoScanSettings struct {
+	// Allow org admin to override the org level repo scan settings
+	RepoScanAllowOverride param.Field[bool] `json:"repoScanAllowOverride"`
+	// Allow repository scanning by default
+	RepoScanByDefault param.Field[bool] `json:"repoScanByDefault"`
+	// Enable the repository scan or not. Only used in org level object
+	RepoScanEnabled param.Field[bool] `json:"repoScanEnabled"`
+	// Sends notification to end user after scanning is done
+	RepoScanEnableNotifications param.Field[bool] `json:"repoScanEnableNotifications"`
+	// Allow override settings at team level. Only used in org level object
+	RepoScanEnableTeamOverride param.Field[bool] `json:"repoScanEnableTeamOverride"`
+	// Allow showing scan results to CLI or UI
+	RepoScanShowResults param.Field[bool] `json:"repoScanShowResults"`
+}
+
+func (r AdminOrgUpdateParamsRepoScanSettings) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AdminOrgUpdateParamsType string
+
+const (
+	AdminOrgUpdateParamsTypeUnknown    AdminOrgUpdateParamsType = "UNKNOWN"
+	AdminOrgUpdateParamsTypeCloud      AdminOrgUpdateParamsType = "CLOUD"
+	AdminOrgUpdateParamsTypeEnterprise AdminOrgUpdateParamsType = "ENTERPRISE"
+	AdminOrgUpdateParamsTypeIndividual AdminOrgUpdateParamsType = "INDIVIDUAL"
+)
+
+func (r AdminOrgUpdateParamsType) IsKnown() bool {
+	switch r {
+	case AdminOrgUpdateParamsTypeUnknown, AdminOrgUpdateParamsTypeCloud, AdminOrgUpdateParamsTypeEnterprise, AdminOrgUpdateParamsTypeIndividual:
+		return true
+	}
+	return false
+}
+
+type AdminOrgEnableParams struct {
+	// False only if called by SbMS.
+	CreateSubscription param.Field[bool] `json:"createSubscription,required"`
+	// Product Enablement
+	ProductEnablement param.Field[AdminOrgEnableParamsProductEnablement] `json:"productEnablement,required"`
+}
+
+func (r AdminOrgEnableParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Product Enablement
+type AdminOrgEnableParamsProductEnablement struct {
+	// Product Name (NVAIE, BASE_COMMAND, REGISTRY, etc)
+	ProductName param.Field[string] `json:"productName,required"`
+	// Product Enablement Types
+	Type param.Field[AdminOrgEnableParamsProductEnablementType] `json:"type,required"`
+	// Date on which the subscription expires. The subscription is invalid after this
+	// date. (yyyy-MM-dd)
+	ExpirationDate param.Field[string]                                          `json:"expirationDate"`
+	PoDetails      param.Field[[]AdminOrgEnableParamsProductEnablementPoDetail] `json:"poDetails"`
+}
+
+func (r AdminOrgEnableParamsProductEnablement) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Product Enablement Types
+type AdminOrgEnableParamsProductEnablementType string
+
+const (
+	AdminOrgEnableParamsProductEnablementTypeNgcAdminEval       AdminOrgEnableParamsProductEnablementType = "NGC_ADMIN_EVAL"
+	AdminOrgEnableParamsProductEnablementTypeNgcAdminNfr        AdminOrgEnableParamsProductEnablementType = "NGC_ADMIN_NFR"
+	AdminOrgEnableParamsProductEnablementTypeNgcAdminCommercial AdminOrgEnableParamsProductEnablementType = "NGC_ADMIN_COMMERCIAL"
+	AdminOrgEnableParamsProductEnablementTypeEmsEval            AdminOrgEnableParamsProductEnablementType = "EMS_EVAL"
+	AdminOrgEnableParamsProductEnablementTypeEmsNfr             AdminOrgEnableParamsProductEnablementType = "EMS_NFR"
+	AdminOrgEnableParamsProductEnablementTypeEmsCommercial      AdminOrgEnableParamsProductEnablementType = "EMS_COMMERCIAL"
+	AdminOrgEnableParamsProductEnablementTypeNgcAdminDeveloper  AdminOrgEnableParamsProductEnablementType = "NGC_ADMIN_DEVELOPER"
+)
+
+func (r AdminOrgEnableParamsProductEnablementType) IsKnown() bool {
+	switch r {
+	case AdminOrgEnableParamsProductEnablementTypeNgcAdminEval, AdminOrgEnableParamsProductEnablementTypeNgcAdminNfr, AdminOrgEnableParamsProductEnablementTypeNgcAdminCommercial, AdminOrgEnableParamsProductEnablementTypeEmsEval, AdminOrgEnableParamsProductEnablementTypeEmsNfr, AdminOrgEnableParamsProductEnablementTypeEmsCommercial, AdminOrgEnableParamsProductEnablementTypeNgcAdminDeveloper:
+		return true
+	}
+	return false
+}
+
+// Purchase Order.
+type AdminOrgEnableParamsProductEnablementPoDetail struct {
+	// Entitlement identifier.
+	EntitlementID param.Field[string] `json:"entitlementId"`
+	// PAK (Product Activation Key) identifier.
+	PkID param.Field[string] `json:"pkId"`
+}
+
+func (r AdminOrgEnableParamsProductEnablementPoDetail) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AdminOrgValidateParams struct {
+	// JWT that contains org owner email and proto org identifier
+	InvitationToken param.Field[string] `query:"invitation_token,required"`
+}
+
+// URLQuery serializes [AdminOrgValidateParams]'s query parameters as `url.Values`.
+func (r AdminOrgValidateParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

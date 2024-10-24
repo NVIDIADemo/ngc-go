@@ -11,10 +11,10 @@ import (
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
 	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
-	"github.com/NVIDIADemo/ngc-go/internal/pagination"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
+	"github.com/NVIDIADemo/ngc-go/packages/pagination"
 	"github.com/NVIDIADemo/ngc-go/shared"
 )
 
@@ -95,7 +95,7 @@ func (r *OrgUserService) Delete(ctx context.Context, orgName string, id string, 
 }
 
 // Invite if user does not exist, otherwise add role in org
-func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailOrID string, params OrgUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
+func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailOrID string, body OrgUserAddRoleParams, opts ...option.RequestOption) (res *shared.User, err error) {
 	opts = append(r.Options[:], opts...)
 	if orgName == "" {
 		err = errors.New("missing required org-name parameter")
@@ -106,7 +106,7 @@ func (r *OrgUserService) AddRole(ctx context.Context, orgName string, userEmailO
 		return
 	}
 	path := fmt.Sprintf("v3/orgs/%s/users/%s/add-role", orgName, userEmailOrID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -301,7 +301,7 @@ type OrgUserListResponseRole struct {
 	// Information about the user who is attempting to run the job
 	TargetSystemUserIdentifier OrgUserListResponseRolesTargetSystemUserIdentifier `json:"targetSystemUserIdentifier"`
 	// Information about the team
-	Team OrgUserListResponseRolesTeam `json:"team"`
+	Team shared.Team `json:"team"`
 	// List of team role types that the user have
 	TeamRoles []string                    `json:"teamRoles"`
 	JSON      orgUserListResponseRoleJSON `json:"-"`
@@ -782,108 +782,6 @@ func (r orgUserListResponseRolesTargetSystemUserIdentifierJSON) RawJSON() string
 	return r.raw
 }
 
-// Information about the team
-type OrgUserListResponseRolesTeam struct {
-	// unique Id of this team.
-	ID int64 `json:"id"`
-	// description of the team
-	Description string `json:"description"`
-	// Infinity manager setting definition
-	InfinityManagerSettings OrgUserListResponseRolesTeamInfinityManagerSettings `json:"infinityManagerSettings"`
-	// indicates if the team is deleted or not
-	IsDeleted bool `json:"isDeleted"`
-	// team name
-	Name string `json:"name"`
-	// Repo scan setting definition
-	RepoScanSettings OrgUserListResponseRolesTeamRepoScanSettings `json:"repoScanSettings"`
-	JSON             orgUserListResponseRolesTeamJSON             `json:"-"`
-}
-
-// orgUserListResponseRolesTeamJSON contains the JSON metadata for the struct
-// [OrgUserListResponseRolesTeam]
-type orgUserListResponseRolesTeamJSON struct {
-	ID                      apijson.Field
-	Description             apijson.Field
-	InfinityManagerSettings apijson.Field
-	IsDeleted               apijson.Field
-	Name                    apijson.Field
-	RepoScanSettings        apijson.Field
-	raw                     string
-	ExtraFields             map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeam) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamJSON) RawJSON() string {
-	return r.raw
-}
-
-// Infinity manager setting definition
-type OrgUserListResponseRolesTeamInfinityManagerSettings struct {
-	// Enable the infinity manager or not. Used both in org and team level object
-	InfinityManagerEnabled bool `json:"infinityManagerEnabled"`
-	// Allow override settings at team level. Only used in org level object
-	InfinityManagerEnableTeamOverride bool                                                    `json:"infinityManagerEnableTeamOverride"`
-	JSON                              orgUserListResponseRolesTeamInfinityManagerSettingsJSON `json:"-"`
-}
-
-// orgUserListResponseRolesTeamInfinityManagerSettingsJSON contains the JSON
-// metadata for the struct [OrgUserListResponseRolesTeamInfinityManagerSettings]
-type orgUserListResponseRolesTeamInfinityManagerSettingsJSON struct {
-	InfinityManagerEnabled            apijson.Field
-	InfinityManagerEnableTeamOverride apijson.Field
-	raw                               string
-	ExtraFields                       map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeamInfinityManagerSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamInfinityManagerSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
-// Repo scan setting definition
-type OrgUserListResponseRolesTeamRepoScanSettings struct {
-	// Allow org admin to override the org level repo scan settings
-	RepoScanAllowOverride bool `json:"repoScanAllowOverride"`
-	// Allow repository scanning by default
-	RepoScanByDefault bool `json:"repoScanByDefault"`
-	// Enable the repository scan or not. Only used in org level object
-	RepoScanEnabled bool `json:"repoScanEnabled"`
-	// Sends notification to end user after scanning is done
-	RepoScanEnableNotifications bool `json:"repoScanEnableNotifications"`
-	// Allow override settings at team level. Only used in org level object
-	RepoScanEnableTeamOverride bool `json:"repoScanEnableTeamOverride"`
-	// Allow showing scan results to CLI or UI
-	RepoScanShowResults bool                                             `json:"repoScanShowResults"`
-	JSON                orgUserListResponseRolesTeamRepoScanSettingsJSON `json:"-"`
-}
-
-// orgUserListResponseRolesTeamRepoScanSettingsJSON contains the JSON metadata for
-// the struct [OrgUserListResponseRolesTeamRepoScanSettings]
-type orgUserListResponseRolesTeamRepoScanSettingsJSON struct {
-	RepoScanAllowOverride       apijson.Field
-	RepoScanByDefault           apijson.Field
-	RepoScanEnabled             apijson.Field
-	RepoScanEnableNotifications apijson.Field
-	RepoScanEnableTeamOverride  apijson.Field
-	RepoScanShowResults         apijson.Field
-	raw                         string
-	ExtraFields                 map[string]apijson.Field
-}
-
-func (r *OrgUserListResponseRolesTeamRepoScanSettings) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r orgUserListResponseRolesTeamRepoScanSettingsJSON) RawJSON() string {
-	return r.raw
-}
-
 // represents user storage quota for a given ace and available unused storage
 type OrgUserListResponseStorageQuota struct {
 	// id of the ace
@@ -1096,8 +994,6 @@ type OrgUserNewParams struct {
 	SalesforceContactJobRole param.Field[string] `json:"salesforceContactJobRole"`
 	// Metadata information about the user.
 	UserMetadata param.Field[OrgUserNewParamsUserMetadata] `json:"userMetadata"`
-	Ncid         param.Field[string]                       `cookie:"ncid"`
-	VisitorID    param.Field[string]                       `cookie:"VisitorID"`
 }
 
 func (r OrgUserNewParams) MarshalJSON() (data []byte, err error) {
@@ -1235,9 +1131,7 @@ func (r OrgUserDeleteParams) URLQuery() (v url.Values) {
 }
 
 type OrgUserAddRoleParams struct {
-	Roles     param.Field[[]string] `query:"roles,required"`
-	Ncid      param.Field[string]   `cookie:"ncid"`
-	VisitorID param.Field[string]   `cookie:"VisitorID"`
+	Roles param.Field[[]string] `query:"roles,required"`
 }
 
 // URLQuery serializes [OrgUserAddRoleParams]'s query parameters as `url.Values`.
