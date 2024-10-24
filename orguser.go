@@ -11,10 +11,10 @@ import (
 
 	"github.com/NVIDIADemo/ngc-go/internal/apijson"
 	"github.com/NVIDIADemo/ngc-go/internal/apiquery"
-	"github.com/NVIDIADemo/ngc-go/internal/pagination"
 	"github.com/NVIDIADemo/ngc-go/internal/param"
 	"github.com/NVIDIADemo/ngc-go/internal/requestconfig"
 	"github.com/NVIDIADemo/ngc-go/option"
+	"github.com/NVIDIADemo/ngc-go/packages/pagination"
 	"github.com/NVIDIADemo/ngc-go/shared"
 )
 
